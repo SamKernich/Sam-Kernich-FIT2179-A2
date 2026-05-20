@@ -1,0 +1,45 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "GBR economic value breakdown by sector (Deloitte Access Economics / Great Barrier Reef Foundation, 2025)",
+  "width": 260,
+  "height": 260,
+  "background": "transparent",
+  "config": {
+    "font": "DM Sans",
+    "legend": {
+      "labelColor": "#c8e6c9",
+      "titleColor": "#81c784",
+      "labelFontSize": 11
+    },
+    "view": { "stroke": "transparent" }
+  },
+  "data": {
+    "values": [
+      {"sector": "Tourism", "value": 7.9},
+      {"sector": "Commercial Fishing", "value": 0.5},
+      {"sector": "Recreational Fishing", "value": 0.3},
+      {"sector": "Scientific Research", "value": 0.2},
+      {"sector": "Cultural & Icon Value", "value": 0.1}
+    ]
+  },
+  "mark": { "type": "arc", "innerRadius": 70, "outerRadius": 120, "padAngle": 0.02, "cornerRadius": 3 },
+  "encoding": {
+    "theta": {
+      "field": "value",
+      "type": "quantitative"
+    },
+    "color": {
+      "field": "sector",
+      "type": "nominal",
+      "scale": {
+        "domain": ["Tourism", "Commercial Fishing", "Recreational Fishing", "Scientific Research", "Cultural & Icon Value"],
+        "range": ["#4dd0e1", "#81c784", "#ffb74d", "#ce93d8", "#ef9a9a"]
+      },
+      "legend": { "title": "Sector", "orient": "right" }
+    },
+    "tooltip": [
+      { "field": "sector", "type": "nominal", "title": "Sector" },
+      { "field": "value", "type": "quantitative", "title": "Annual Value (AUD Billion)", "format": ".1f" }
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+DATE CREATED
+2026-05-20T13:08:45+10:00
+
+ATTRIBUTION
+https://www.aims.gov.au/cc-attribution
+
+DISCLAIMER
+https://www.aims.gov.au/disclaimer
+
+PRIVACY
+https://www.aims.gov.au/privacy-policy
+
+COPYRIGHT
+https://www.aims.gov.au/cc-copyright
+
+COMMENT
+"These data are provided by this web service under a Creative Commons License.  Please read the copyright statement and attribute AIMS according to the attribution information above.  All or some data delivered by this service may be provided by a third party and should also be attributed.  The ownership of data will be associated with the deployment information in the data.  If no ownership is supplied, AIMS is the implied owner. "
+
+SENSOR DEFINITIONS
+Seabird SBE37-IM MicroCat CTD with Pressure 6260
+
+UOM DEFINITIONS
+Degrees Celsius
+
+STATION,Davies Reef
+LATITUDE,-18.83162
+STATION,147.6345
+
+BLEACH THRESHOLDS
+SUMMER-BEGINNING,TEMPERATURE,THRESHOLD-DAYS,ACTUAL-DAYS
+2025-11-01T00:00:00,28.9,25.4,37
+2025-11-01T00:00:00,29.0,23.6,26
+2025-11-01T00:00:00,29.1,20.6,20
+2025-11-01T00:00:00,29.2,19.0,10
+2025-11-01T00:00:00,29.3,17.0,4
+2025-11-01T00:00:00,29.4,15.0,3
+2025-11-01T00:00:00,29.5,11.0,0
+2025-11-01T00:00:00,29.6,6.0,0
+2025-11-01T00:00:00,29.7,2.4,0
+2025-11-01T00:00:00,29.8,0.0,0
+2025-11-01T00:00:00,29.9,0.0,0
+2025-11-01T00:00:00,30.0,0.0,0
+2025-11-01T00:00:00,30.1,0.0,0
+2025-11-01T00:00:00,30.2,0.0,0

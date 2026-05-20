@@ -1,0 +1,194 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Parallel coordinate plot of AIMS LTMP manta-tow reef surveys. Each line is one reef, coloured by region. Axes: Region, Shelf Position, Live Coral Cover (%), COTS per Tow.",
+  "width": "container",
+  "height": 300,
+  "background": "transparent",
+  "config": {
+    "font": "DM Sans",
+    "axisX": {
+      "domain": false,
+      "labelAngle": 0,
+      "tickColor": "#1a3a5c",
+      "title": null,
+      "labelColor": "#90caf9",
+      "labelFontSize": 12
+    },
+    "view": { "stroke": null },
+    "style": {
+      "label": { "baseline": "middle", "align": "right", "dx": -10, "fill": "#64b5f6", "fontSize": 10 },
+      "tick":  { "orient": "horizontal" }
+    }
+  },
+  "params": [
+    {
+      "name": "year_param",
+      "value": 2023,
+      "bind": {
+        "input": "range",
+        "min": 1993,
+        "max": 2023,
+        "step": 1,
+        "name": "Survey Year: "
+      }
+    }
+  ],
+  "data": { "url": "data/manta-tow-by-reef.csv" },
+  "transform": [
+    { "calculate": "toNumber(datum.REPORT_YEAR)", "as": "year" },
+    { "filter": "datum.year == year_param" },
+    { "filter": "datum.MEAN_LIVE_CORAL != ''" },
+    { "calculate": "toNumber(datum.MEAN_LIVE_CORAL)", "as": "Live Coral (%)" },
+    {
+      "calculate": "datum.MEAN_COTS_PER_TOW != '' ? toNumber(datum.MEAN_COTS_PER_TOW) : 0",
+      "as": "COTS per Tow"
+    },
+    {
+      "calculate": "datum.MEAN_TROUT_PER_TOW != '' ? toNumber(datum.MEAN_TROUT_PER_TOW) : 0",
+      "as": "Trout"
+    },
+    {
+      "calculate": "sqrt(datum['Trout'])", 
+      "as": "Trout per Tow"
+    },
+    {
+      "calculate": "sqrt(datum['COTS per Tow'])",
+      "as": "COTS per Tow (sqrt)"
+    },
+    {
+      "calculate": "datum.SECTOR === 'TS' || datum.SECTOR === 'CG' || datum.SECTOR === 'PC' || datum.SECTOR === 'CL' || datum.SECTOR === 'CA' || datum.SECTOR === 'IN' ? 'Northern' : datum.SECTOR === 'CU' || datum.SECTOR === 'TO' || datum.SECTOR === 'WH' ? 'Central' : 'Southern'",
+      "as": "Region"
+    },
+    {
+      "calculate": "datum.SHELF === 'I' ? 'Inshore' : datum.SHELF === 'M' ? 'Mid-shelf' : 'Outer'",
+      "as": "Shelf"
+    },
+    {
+      "calculate": "datum.Region === 'Northern' ? 0 : datum.Region === 'Central' ? 1 : 2",
+      "as": "Region (encoded)"
+    },
+    {
+      "calculate": "datum.Shelf === 'Inshore' ? 0 : datum.Shelf === 'Mid-shelf' ? 1 : 2",
+      "as": "Shelf (encoded)"
+    },
+    { "window": [{ "op": "count", "as": "index" }] },
+    {
+      "fold": ["Region (encoded)", "Shelf (encoded)", "Live Coral (%)", "COTS per Tow (sqrt)", "Trout per Tow"]
+    },
+    {
+      "joinaggregate": [
+        { "op": "min", "field": "value", "as": "min" },
+        { "op": "max", "field": "value", "as": "max" }
+      ],
+      "groupby": ["key"]
+    },
+    {
+      "calculate": "(datum.max - datum.min) > 0 ? (datum.value - datum.min) / (datum.max - datum.min) : 0.5",
+      "as": "norm_val"
+    },
+    {
+      "calculate": "(datum.min + datum.max) / 2",
+      "as": "mid"
+    }
+  ],
+  "layer": [
+    {
+      "mark": { "type": "rule", "color": "#90caf9" },
+      "encoding": {
+        "detail": { "aggregate": "count" },
+        "x": {
+          "field": "key",
+          "type": "nominal",
+          "sort": ["Region (encoded)", "Shelf (encoded)", "Live Coral (%)", "COTS per Tow (sqrt)"]
+        }
+      }
+    },
+    {
+      "mark": { "type": "line", "strokeWidth": 1 },
+      "encoding": {
+        "color": {
+          "field": "Region",
+          "type": "nominal",
+          
+          "scale": {
+            "domain": ["Northern", "Central", "Southern"],
+            "range":  ["#4dd0e1", "#81c784", "#ffb74d"]
+          },
+          "legend": {
+            "title": "Region",
+            "labelColor": "#90caf9",
+            "titleColor": "#64b5f6",
+            "orient": "top-right"
+          }
+        },
+        "detail":  { "type": "nominal", "field": "index" },
+        "opacity": { "value": 0.35 },
+        "x": {
+          "type": "nominal",
+          "field": "key",
+          "sort": ["Region (encoded)", "Shelf (encoded)", "Live Coral (%)", "COTS per Tow (sqrt)"]
+        },
+        "y": {
+          "type": "quantitative",
+          "field": "norm_val",
+          "axis": null
+        },
+        "tooltip": [
+          { "field": "REEF_NAME",        "type": "nominal",      "title": "Reef" },
+          { "field": "Region",           "type": "nominal",      "title": "Region" },
+          { "field": "Shelf",            "type": "nominal",      "title": "Shelf" },
+          { "field": "Live Coral (%)",   "type": "quantitative", "title": "Live Coral (%)",  "format": ".1f" },
+          { "field": "COTS per Tow",     "type": "quantitative", "title": "COTS / Tow (raw)","format": ".3f" }
+        ]
+      }
+    },
+    {
+      "encoding": {
+        "x": {
+          "type": "nominal", "field": "key",
+          "sort": ["Region (encoded)", "Shelf (encoded)", "Live Coral (%)", "COTS per Tow (sqrt)"]
+        },
+        "y": { "value": 0 }
+      },
+      "layer": [
+        {
+          "mark": { "type": "text", "style": "label" },
+          "encoding": { "text": { "aggregate": "max", "field": "max", "format": ".2f" } }
+        },
+        { "mark": { "type": "tick", "style": "tick", "size": 8, "color": "#90caf9" } }
+      ]
+    },
+    {
+      "encoding": {
+        "x": {
+          "type": "nominal", "field": "key",
+          "sort": ["Region (encoded)", "Shelf (encoded)", "Live Coral (%)", "COTS per Tow (sqrt)"]
+        },
+        "y": { "value": 150 }
+      },
+      "layer": [
+        {
+          "mark": { "type": "text", "style": "label" },
+          "encoding": { "text": { "aggregate": "min", "field": "mid", "format": ".2f" } }
+        },
+        { "mark": { "type": "tick", "style": "tick", "size": 8, "color": "#90caf9" } }
+      ]
+    },
+    {
+      "encoding": {
+        "x": {
+          "type": "nominal", "field": "key",
+          "sort": ["Region (encoded)", "Shelf (encoded)", "Live Coral (%)", "COTS per Tow (sqrt)"]
+        },
+        "y": { "value": 300 }
+      },
+      "layer": [
+        {
+          "mark": { "type": "text", "style": "label" },
+          "encoding": { "text": { "aggregate": "min", "field": "min", "format": ".2f" } }
+        },
+        { "mark": { "type": "tick", "style": "tick", "size": 8, "color": "#90caf9" } }
+      ]
+    }
+  ]
+}

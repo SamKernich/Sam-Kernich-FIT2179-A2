@@ -1,0 +1,176 @@
+/**
+ * cube.css
+ * --------
+ * Styles for the GBR SST anomaly 3D cube visualisation.
+ *
+ * Claude AI used to format and outline the design and structure of the cube. 
+ *
+ * Created: 20/06/2024 by Sam.
+ */
+
+/*  Size tokens  */
+:root {
+  --cube-size: 340px;
+  --cube-half: 170px;
+}
+
+/*  Wrapper  */
+.cube-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 0 2rem;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  gap: 16px;
+}
+
+/* Legend row  */
+.cube-legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-bottom: 0;
+  font-size: 11px;
+  color: var(--text-secondary, #90caf9);
+  justify-content: center;
+}
+
+.cube-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cube-swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/*  3D scene container  */
+.cube-scene {
+  width: var(--cube-size);
+  height: calc(var(--cube-size) * 1.5);  /* taller than cube to absorb 3D rotation overflow */
+  max-width: 100%;
+  perspective: 900px;
+  cursor: grab;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cube-scene:active {
+  cursor: grabbing;
+}
+
+/* Cube */
+.cube-3d {
+  width: var(--cube-size);
+  height: var(--cube-size);
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(-22deg) rotateY(35deg);
+  transition: transform 0.04s linear;
+  flex-shrink: 0;  /* prevent flex from squishing it */
+}
+
+/*  Faces  */
+.cube-face {
+  position: absolute;
+  width: var(--cube-size);
+  height: var(--cube-size);
+  backface-visibility: hidden;
+  border: 1px solid rgba(9, 214, 221, 0.2);
+  overflow: hidden;
+  background: #001a2e;
+}
+
+.cube-face--front  { transform: translateZ(var(--cube-half)); }
+.cube-face--back   { transform: rotateY(180deg)  translateZ(var(--cube-half)); }
+.cube-face--right  { transform: rotateY(90deg)   translateZ(var(--cube-half)); }
+.cube-face--left   { transform: rotateY(-90deg)  translateZ(var(--cube-half)); }
+.cube-face--top    { transform: rotateX(90deg)   translateZ(var(--cube-half)); }
+.cube-face--bottom { transform: rotateX(-90deg)  translateZ(var(--cube-half)); }
+
+.cube-face-inner {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.cube-face-label {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(9, 214, 221, 0.7);
+  pointer-events: none;
+}
+
+/*  Controls */
+.cube-controls {
+  display: flex;
+  gap: 6px;
+  margin-top: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.cube-btn {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(9, 214, 221, 0.35);
+  background: transparent;
+  color: #09d6dd;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.cube-btn:hover {
+  background: rgba(9, 214, 221, 0.1);
+  border-color: rgba(9, 214, 221, 0.6);
+}
+
+/*  Hint */
+.cube-hint {
+  margin-top: 0;
+  font-size: 10px;
+  color: var(--text-muted, #4d7ea8);
+  opacity: 0.8;
+  text-align: center;
+}
+
+/*  Responsive breakpoints — update BOTH size and half together  */
+@media (max-width: 900px) {
+  :root {
+    --cube-size: 300px;
+    --cube-half: 150px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --cube-size: 260px;
+    --cube-half: 130px;
+  }
+}
+
+@media (max-width: 380px) {
+  :root {
+    --cube-size: 220px;
+    --cube-half: 110px;
+  }
+}

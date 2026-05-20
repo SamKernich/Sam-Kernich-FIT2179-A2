@@ -1,0 +1,239 @@
+
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": 400,
+  "padding": { "left": 25, "right": 5, "top": 5, "bottom": 5 },
+  "autosize": { "type": "fit", "contains": "padding" },
+  "title": {
+    "text": "Coral Substrate Composition",
+    "subtitle": "Position = proportional share of live / dead / soft coral Colour = survey year",
+    "color": "#e8f4f8",
+    "subtitleColor": "#a8d4df",
+    "font": "Playfair Display, serif",
+    "subtitleFont": "Source Sans 3, sans-serif",
+    "subtitleFontSize": 9,
+    "fontSize": 13,
+    "anchor": "start",
+    "offset": 8
+  },
+  "config": {
+    "background": "transparent",
+    "font": "Source Sans 3, sans-serif",
+    "view": { "stroke": "transparent" },
+    "legend": {
+      "labelColor":   "#6fb3c4",
+      "titleColor":   "#a8d4df",
+      "fillColor":    "rgba(0,20,35,0.82)",
+      "strokeColor":  "rgba(94,200,192,0.25)",
+      "cornerRadius": 6,
+      "padding":      8,
+      "titleFontSize": 10,
+      "labelFontSize": 9
+    }
+  },
+  "layer": [
+    {
+      "description": "Dashed grid lines at 25 / 50 / 75 % for all three axes",
+      "data": {
+        "values": [
+          {"x1": 0.75,  "y1": 0.0,    "x2": 0.375, "y2": 0.6495},
+          {"x1": 0.50,  "y1": 0.0,    "x2": 0.250, "y2": 0.4330},
+          {"x1": 0.25,  "y1": 0.0,    "x2": 0.125, "y2": 0.2165},
+          {"x1": 0.25,  "y1": 0.0,    "x2": 0.625, "y2": 0.6495},
+          {"x1": 0.50,  "y1": 0.0,    "x2": 0.750, "y2": 0.4330},
+          {"x1": 0.75,  "y1": 0.0,    "x2": 0.875, "y2": 0.2165},
+          {"x1": 0.125, "y1": 0.2165, "x2": 0.875, "y2": 0.2165},
+          {"x1": 0.250, "y1": 0.4330, "x2": 0.750, "y2": 0.4330},
+          {"x1": 0.375, "y1": 0.6495, "x2": 0.625, "y2": 0.6495}
+        ]
+      },
+      "mark": {
+        "type": "rule",
+        "stroke": "rgba(94,200,192,0.15)",
+        "strokeWidth": 0.8,
+        "strokeDash": [4, 3]
+      },
+      "encoding": {
+        "x":  { "field": "x1", "type": "quantitative", "scale": { "domain": [-0.14, 1.14] }, "axis": null },
+        "y":  { "field": "y1", "type": "quantitative", "scale": { "domain": [-0.12, 0.98] }, "axis": null },
+        "x2": { "field": "x2" },
+        "y2": { "field": "y2" }
+      }
+    },
+    {
+      "description": "Triangle border",
+      "data": {
+        "values": [
+          { "x1": 0.0, "y1": 0.0,    "x2": 1.0, "y2": 0.0    },
+          { "x1": 0.0, "y1": 0.0,    "x2": 0.5, "y2": 0.8660 },
+          { "x1": 1.0, "y1": 0.0,    "x2": 0.5, "y2": 0.8660 }
+        ]
+      },
+      "mark": {
+        "type": "rule",
+        "stroke": "rgba(94,200,192,0.5)",
+        "strokeWidth": 1.6
+      },
+      "encoding": {
+        "x":  { "field": "x1", "type": "quantitative", "axis": null },
+        "y":  { "field": "y1", "type": "quantitative", "axis": null },
+        "x2": { "field": "x2" },
+        "y2": { "field": "y2" }
+      }
+    },
+    {
+      "description": "Corner label — Live Hard Coral (right-aligned at bottom-left)",
+      "data": { "values": [ { "x": 0.0, "y": 0.0, "t": "Live Hard Coral" } ] },
+      "mark": {
+        "type": "text", "align": "right",
+        "fontWeight": "bold", "fontSize": 11,
+        "color": "#5ec8c0", "dx": -6, "dy": 14
+      },
+      "encoding": {
+        "x":    { "field": "x", "type": "quantitative", "axis": null },
+        "y":    { "field": "y", "type": "quantitative", "axis": null },
+        "text": { "field": "t", "type": "nominal" }
+      }
+    },
+    {
+      "description": "Corner label — Dead Coral (left-aligned at bottom-right)",
+      "data": { "values": [ { "x": 1.0, "y": 0.0, "t": "Dead Coral" } ] },
+      "mark": {
+        "type": "text", "align": "left",
+        "fontWeight": "bold", "fontSize": 11,
+        "color": "#e07a5f", "dx": 6, "dy": 14
+      },
+      "encoding": {
+        "x":    { "field": "x", "type": "quantitative", "axis": null },
+        "y":    { "field": "y", "type": "quantitative", "axis": null },
+        "text": { "field": "t", "type": "nominal" }
+      }
+    },
+    {
+      "description": "Corner label — Soft Coral (centred above top vertex)",
+      "data": { "values": [ { "x": 0.5, "y": 0.866, "t": "Soft Coral" } ] },
+      "mark": {
+        "type": "text", "align": "center",
+        "fontWeight": "bold", "fontSize": 11,
+        "color": "#e9c46a", "dy": -13
+      },
+      "encoding": {
+        "x":    { "field": "x", "type": "quantitative", "axis": null },
+        "y":    { "field": "y", "type": "quantitative", "axis": null },
+        "text": { "field": "t", "type": "nominal" }
+      }
+    },
+    {
+      "description": "Tick labels — bottom edge (dead coral %, left→right)",
+      "data": {
+        "values": [
+          { "x": 0.25, "y": -0.04, "t": "25%" },
+          { "x": 0.50, "y": -0.04, "t": "50%" },
+          { "x": 0.75, "y": -0.04, "t": "75%" }
+        ]
+      },
+      "mark": { "type": "text", "align": "center", "fontSize": 8.5, "color": "#6fb3c4" },
+      "encoding": {
+        "x":    { "field": "x", "type": "quantitative", "axis": null },
+        "y":    { "field": "y", "type": "quantitative", "axis": null },
+        "text": { "field": "t", "type": "nominal" }
+      }
+    },
+    {
+      "description": "Tick labels — left edge (live coral %, decreasing upward)",
+      "data": {
+        "values": [
+          { "x": 0.125, "y": 0.2165, "t": "75%" },
+          { "x": 0.250, "y": 0.4330, "t": "50%" },
+          { "x": 0.375, "y": 0.6495, "t": "25%" }
+        ]
+      },
+      "mark": { "type": "text", "align": "right", "fontSize": 8.5, "color": "#6fb3c4", "dx": -7 },
+      "encoding": {
+        "x":    { "field": "x", "type": "quantitative", "axis": null },
+        "y":    { "field": "y", "type": "quantitative", "axis": null },
+        "text": { "field": "t", "type": "nominal" }
+      }
+    },
+    {
+      "description": "Tick labels — right edge (soft coral %, increasing upward)",
+      "data": {
+        "values": [
+          { "x": 0.875, "y": 0.2165, "t": "25%" },
+          { "x": 0.750, "y": 0.4330, "t": "50%" },
+          { "x": 0.625, "y": 0.6495, "t": "75%" }
+        ]
+      },
+      "mark": { "type": "text", "align": "left", "fontSize": 8.5, "color": "#6fb3c4", "dx": 7 },
+      "encoding": {
+        "x":    { "field": "x", "type": "quantitative", "axis": null },
+        "y":    { "field": "y", "type": "quantitative", "axis": null },
+        "text": { "field": "t", "type": "nominal" }
+      }
+    },
+    {
+      "description": "Survey-site data points from manta tow dataset",
+      "data": { "url": "data/manta-tow-by-reef.csv" },
+      "transform": [
+        {
+          "filter": "datum.MEAN_LIVE_CORAL !== '' && datum.MEAN_SOFT_CORAL !== '' && datum.MEAN_DEAD_CORAL !== '' && datum.MEAN_COTS_PER_TOW !== ''"
+        },
+        { "calculate": "toNumber(datum.MEAN_LIVE_CORAL)", "as": "live" },
+        { "calculate": "toNumber(datum.MEAN_SOFT_CORAL)", "as": "soft" },
+        { "calculate": "toNumber(datum.MEAN_DEAD_CORAL)", "as": "dead" },
+        { "calculate": "datum.live + datum.soft + datum.dead",  "as": "total" },
+        { "filter": "datum.total > 0" },
+        { "calculate": "datum.live / datum.total", "as": "a" },
+        { "calculate": "datum.dead / datum.total", "as": "b" },
+        { "calculate": "datum.soft / datum.total", "as": "c" },
+        { "calculate": "datum.b + datum.c / 2",    "as": "tx" },
+        { "calculate": "datum.c * 0.8660254",      "as": "ty" },
+        { "calculate": "toNumber(datum.MEAN_COTS_PER_TOW)", "as": "cots" },
+        { "calculate": "toNumber(datum.REPORT_YEAR)",       "as": "year" },
+        {
+          "calculate": "round(datum.a*100) + '% live · ' + round(datum.b*100) + '% dead · ' + round(datum.c*100) + '% soft'",
+          "as": "composition"
+        }
+      ],
+      "mark": {
+        "type": "circle",
+        "opacity": 0.68,
+        "stroke": "rgba(255,255,255,0.15)",
+        "strokeWidth": 0.5
+      },
+      "encoding": {
+        "x": { "field": "tx", "type": "quantitative", "axis": null },
+        "y": { "field": "ty", "type": "quantitative", "axis": null },
+        "color": {
+          "field": "year",
+          "type": "quantitative",
+          "scale": { "scheme": "viridis", "domain": [1998, 2023] },
+          "legend": {
+            "title": "Survey year",
+            "gradientLength": 110,
+            "gradientThickness": 10
+          }
+        },
+        "size": {
+          "field": "cots",
+          "type": "quantitative",
+          "scale": { "type": "sqrt", "range": [10, 260] },
+          "legend": {
+            "title": "COTS / tow",
+            "values": [0, 1, 5, 20, 86],
+            "symbolOpacity": 0.8
+          }
+        },
+        "tooltip": [
+          { "field": "REEF_NAME",   "type": "nominal",      "title": "Reef"              },
+          { "field": "SECTOR",      "type": "nominal",      "title": "Sector"            },
+          { "field": "SHELF",       "type": "nominal",      "title": "Shelf"             },
+          { "field": "year",        "type": "quantitative", "title": "Year"              },
+          { "field": "composition", "type": "nominal",      "title": "Coral composition" },
+          { "field": "cots",        "type": "quantitative", "title": "COTS / tow", "format": ".2f" }
+        ]
+      }
+    }
+  ]
+}

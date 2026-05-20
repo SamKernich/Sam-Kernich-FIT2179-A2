@@ -1,0 +1,168 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Animated COTS (Crown-of-Thorns Starfish) mean detections per manta tow by GBR region, 1993-2023. Source: AIMS LTMP Manta Tow Dataset doi:10.25845/5c09b0abf315a",
+  "width": "container",
+  "height": 300,
+  "background": "transparent",
+  "config": {
+    "font": "Source Sans 3, sans-serif",
+    "axis": {
+      "labelColor": "#6fb3c4",
+      "titleColor": "#a8d4df",
+      "gridColor": "rgba(94,200,192,0.12)",
+      "domainColor": "rgba(94,200,192,0.3)",
+      "tickColor": "rgba(94,200,192,0.3)",
+      "labelFontSize": 11,
+      "titleFontSize": 12
+    },
+    "legend": {
+      "labelColor": "#6fb3c4",
+      "titleColor": "#a8d4df",
+      "labelFontSize": 11
+    },
+    "view": { "stroke": "transparent" }
+  },
+
+  "params": [
+    { "name": "max_year", "value": 1993 }
+  ],
+
+  "resolve": { "scale": { "y": "shared", "x": "shared" } },
+
+  "layer": [
+
+    {
+      "description": "Orange bands for bleaching event windows",
+      "data": {
+        "values": [
+          { "x1": 1997, "x2": 1999 },
+          { "x1": 2001, "x2": 2003 },
+          { "x1": 2015, "x2": 2017 },
+          { "x1": 2019, "x2": 2021 },
+          { "x1": 2023, "x2": 2024 }
+        ]
+      },
+      "mark": { "type": "rect", "opacity": 0.12, "color": "#ff6b35" },
+      "encoding": {
+        "x":  { "field": "x1", "type": "quantitative", "scale": { "domain": [1993, 2023] } },
+        "x2": { "field": "x2", "type": "quantitative" },
+        "y":  { "value": 0 },
+        "y2": { "value": 300 }
+      }
+    },
+
+    {
+      "description": "Dashed red outbreak threshold line at 0.22 COTS/tow",
+      "data": { "values": [{}] },
+      "mark": {
+        "type": "rule",
+        "color": "#e53935",
+        "strokeDash": [5, 4],
+        "strokeWidth": 1.3,
+        "opacity": 0.75
+      },
+      "encoding": {
+        "y": { "datum": 0.22, "type": "quantitative" }
+      }
+    },
+
+    {
+      "description": "Label for outbreak threshold",
+      "data": { "values": [{ "year": 1994, "val": 0.22 }] },
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 4,
+        "dy": -7,
+        "fontSize": 9,
+        "color": "#e57373",
+        "fontStyle": "italic"
+      },
+      "encoding": {
+        "x": { "field": "year", "type": "quantitative", "scale": { "domain": [1993, 2023] } },
+        "y": { "field": "val",  "type": "quantitative" },
+        "text": { "value": "Outbreak threshold (0.22 COTS/tow)" }
+      }
+    },
+
+    {
+      "description": "COTS lines and points from CSV — aggregated by region and year",
+      "data": { "url": "data/manta-tow-by-reef.csv" },
+      "transform": [
+        { "filter": "datum.MEAN_COTS_PER_TOW !== ''" },
+        { "calculate": "toNumber(datum.REPORT_YEAR)", "as": "year" },
+        { "calculate": "toNumber(datum.MEAN_COTS_PER_TOW)", "as": "cots" },
+        {
+          "calculate": "datum.SECTOR === 'TS' || datum.SECTOR === 'CG' || datum.SECTOR === 'PC' || datum.SECTOR === 'CL' || datum.SECTOR === 'CA' || datum.SECTOR === 'IN' ? 'Northern' : datum.SECTOR === 'CU' || datum.SECTOR === 'TO' || datum.SECTOR === 'WH' ? 'Central' : 'Southern'",
+          "as": "region"
+        },
+        { "filter": "datum.year >= 1993 && datum.year <= 2023" },
+        {
+          "aggregate": [{ "op": "mean", "field": "cots", "as": "mean_cots" }],
+          "groupby": ["year", "region"]
+        },
+        { "filter": "datum.year <= max_year" }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "line",
+            "strokeWidth": 2.5,
+            "interpolate": "monotone"
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "quantitative",
+              "scale": { "domain": [1993, 2023], "nice": false },
+              "axis": {
+                "format": "d",
+                "title": "Year",
+                "values": [1993, 1995, 1997, 1999, 2001, 2003, 2005, 2007, 2009, 2011, 2013, 2015, 2017, 2019, 2021, 2023]
+              }
+            },
+            "y": {
+              "field": "mean_cots",
+              "type": "quantitative",
+              "scale": { "type": "sqrt", "domain": [0, 5.5] },
+              "axis": {
+                "title": "Mean COTS per Tow (√ scale)",
+                "values": [0, 0.1, 0.22, 0.5, 1, 2, 4]
+              }
+            },
+            "color": {
+              "field": "region",
+              "type": "nominal",
+              "scale": {
+                "domain": ["Northern", "Central", "Southern"],
+                "range":  ["#4dd0e1",  "#81c784",  "#ffb74d"]
+              },
+              "legend": { "title": "Region", "orient": "top-right" }
+            }
+          }
+        },
+        {
+          "mark": { "type": "point", "filled": true, "size": 55, "opacity": 0.85 },
+          "encoding": {
+            "x": { "field": "year", "type": "quantitative" },
+            "y": { "field": "mean_cots", "type": "quantitative" },
+            "color": {
+              "field": "region",
+              "type": "nominal",
+              "scale": {
+                "domain": ["Northern", "Central", "Southern"],
+                "range":  ["#4dd0e1",  "#81c784",  "#ffb74d"]
+              }
+            },
+            "tooltip": [
+              { "field": "year",      "type": "quantitative", "title": "Year" },
+              { "field": "region",    "type": "nominal",      "title": "Region" },
+              { "field": "mean_cots", "type": "quantitative", "title": "COTS / Tow", "format": ".3f" }
+            ]
+          }
+        }
+      ]
+    }
+
+  ]
+}

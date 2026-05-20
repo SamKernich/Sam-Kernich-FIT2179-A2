@@ -1,0 +1,94 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Treemap of words used to describe the Great Barrier Reef",
+  "width": 480,
+  "height": 360,
+  "padding": 0,
+  "background": "transparent",
+
+  "data": [
+    {
+      "name": "tree",
+      "url": "data/describe-reef-words.json",
+      "format": { "type": "json" },
+      "transform": [
+        {
+          "type": "stratify",
+          "key": "id",
+          "parentKey": "parent"
+        },
+        {
+          "type": "treemap",
+          "field": "count",
+          "sort": { "field": "value", "order": "descending" },
+          "round": true,
+          "method": "squarify",
+          "ratio": 1.618,
+          "padding": 2,
+          "size": [ { "signal": "width" }, { "signal": "height" } ],
+          "as": [ "x0", "y0", "x1", "y1", "depth", "children" ]
+        }
+      ]
+    },
+    {
+      "name": "leaves",
+      "source": "tree",
+      "transform": [
+        { "type": "filter", "expr": "datum.depth > 0" }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "linear",
+      "domain": { "data": "leaves", "field": "count" },
+      "range": [ "#1a4a6e", "#5ec8c0" ]
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": { "data": "leaves" },
+      "encode": {
+        "enter": {
+          "x":           { "field": "x0" },
+          "y":           { "field": "y0" },
+          "x2":          { "field": "x1" },
+          "y2":          { "field": "y1" },
+          "fill":        { "scale": "color", "field": "count" },
+          "stroke":      { "value": "rgba(0,18,30,0.8)" },
+          "strokeWidth": { "value": 1.5 },
+          "tooltip":     { "signal": "{'Word': datum.text, 'Mentions': datum.count}" }
+        },
+        "update": { "fillOpacity": { "value": 0.92 } },
+        "hover": {
+          "fillOpacity": { "value": 1 },
+          "stroke":      { "value": "#e9c46a" },
+          "strokeWidth": { "value": 2 }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": { "data": "leaves" },
+      "encode": {
+        "enter": {
+          "x":          { "signal": "0.5 * (datum.x0 + datum.x1)" },
+          "y":          { "signal": "0.5 * (datum.y0 + datum.y1)" },
+          "text":       { "field": "text" },
+          "align":      { "value": "center" },
+          "baseline":   { "value": "middle" },
+          "fill":       { "value": "#e8f4f8" },
+          "fontWeight": { "value": "600" },
+          "fontFamily": { "value": "Source Sans 3, sans-serif" },
+          "fontSize":   { "signal": "clamp((datum.x1 - datum.x0) / 6, 8, 13)" },
+          "limit":      { "signal": "datum.x1 - datum.x0 - 4" },
+          "fillOpacity":{ "signal": "(datum.x1-datum.x0)>28 && (datum.y1-datum.y0)>14 ? 1 : 0" }
+        }
+      }
+    }
+  ]
+}

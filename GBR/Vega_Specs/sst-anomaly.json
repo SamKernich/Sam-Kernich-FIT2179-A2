@@ -1,0 +1,196 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Waterfall chart of Coral Sea sea surface temperature anomaly (°C above long-term average) for the bleaching season (January–March), 1998–2025.",
+  "background": "transparent",
+  "autosize": {
+    "type": "fit-x",
+    "contains": "padding",
+    "resize": true
+  },
+  "config": {
+    "font": "DM Sans",
+    "axis": {
+      "labelAngle": -45,
+      "labelColor": "#6fb3c4",
+      "titleColor": "#a8d4df",
+      "gridColor": "rgba(94,200,192,0.12)",
+      "domainColor": "rgba(94,200,192,0.3)",
+      "tickColor": "rgba(94,200,192,0.3)",
+      "labelFontSize": 11,
+      "titleFontSize": 12
+    },
+    "view": { "stroke": "transparent" },
+    "concat": { "spacing": 16 }
+  },
+  "vconcat": [
+    {
+      "width": "container",
+      "height": 420,
+      "data": {
+        "values": [
+          {"label": "1998", "amount": 0.8,  "bleaching": true,  "note": "Start — El Niño; first mass bleaching GBR"},
+          {"label": "1999", "amount": -0.9, "bleaching": false, "note": "La Niña recovery"},
+          {"label": "2000", "amount": 0.2,  "bleaching": false, "note": ""},
+          {"label": "2001", "amount": 0.1,  "bleaching": false, "note": ""},
+          {"label": "2002", "amount": 0.5,  "bleaching": true,  "note": "Second mass bleaching GBR"},
+          {"label": "2003", "amount": -0.4, "bleaching": false, "note": ""},
+          {"label": "2004", "amount": 0.6,  "bleaching": false, "note": ""},
+          {"label": "2005", "amount": -0.5, "bleaching": false, "note": ""},
+          {"label": "2006", "amount": 0.1,  "bleaching": true,  "note": "Third mass bleaching GBR"},
+          {"label": "2007", "amount": -0.3, "bleaching": false, "note": ""},
+          {"label": "2008", "amount": -0.3, "bleaching": false, "note": "La Niña"},
+          {"label": "2009", "amount": 0.4,  "bleaching": false, "note": ""},
+          {"label": "2010", "amount": -0.5, "bleaching": false, "note": "La Niña"},
+          {"label": "2011", "amount": 0.1,  "bleaching": false, "note": ""},
+          {"label": "2012", "amount": 0.3,  "bleaching": false, "note": ""},
+          {"label": "2013", "amount": 0.2,  "bleaching": false, "note": ""},
+          {"label": "2014", "amount": 0.1,  "bleaching": false, "note": ""},
+          {"label": "2015", "amount": 0.1,  "bleaching": false, "note": "El Niño building"},
+          {"label": "2016", "amount": 0.6,  "bleaching": true,  "note": "Worst bleaching on record to that date"},
+          {"label": "2017", "amount": 0.2,  "bleaching": true,  "note": "Back-to-back bleaching (first time)"},
+          {"label": "2018", "amount": -0.9, "bleaching": false, "note": ""},
+          {"label": "2019", "amount": -0.2, "bleaching": false, "note": ""},
+          {"label": "2020", "amount": 1.0,  "bleaching": true,  "note": "Fifth mass bleaching; largest area affected"},
+          {"label": "2021", "amount": -1.4, "bleaching": false, "note": "La Niña"},
+          {"label": "2022", "amount": 1.2,  "bleaching": true,  "note": "Sixth mass bleaching"},
+          {"label": "2023", "amount": -0.2, "bleaching": false, "note": ""},
+          {"label": "2024", "amount": 0.7,  "bleaching": true,  "note": "Global mass bleaching; record GBR extent"},
+          {"label": "2025", "amount": -0.5, "bleaching": true,  "note": "End — bleaching despite modest anomaly decline"},
+          {"label": "End",  "amount": 0,    "bleaching": false, "note": "Cumulative total from 1998 baseline"}
+        ]
+      },
+      "transform": [
+        {"window": [{"op": "sum", "field": "amount", "as": "sum"}]},
+        {"window": [{"op": "lead", "field": "label", "as": "lead"}]},
+        {"calculate": "datum.lead === null ? datum.label : datum.lead", "as": "lead"},
+        {"calculate": "datum.label === 'End' ? 0 : datum.sum - datum.amount", "as": "previous_sum"},
+        {"calculate": "datum.label === 'End' ? datum.sum : datum.amount", "as": "amount"},
+        {"calculate": "(datum.label !== '1998' && datum.label !== 'End' && datum.amount > 0 ? '+' : '') + format(datum.amount, '.2f')", "as": "text_amount"},
+        {"calculate": "(datum.sum + datum.previous_sum) / 2", "as": "center"}
+      ],
+      "encoding": {
+        "x": {
+          "field": "label",
+          "type": "ordinal",
+          "sort": null,
+          "axis": {"title": "Year", "labelAngle": -45, "labelFontSize": 10}
+        }
+      },
+      "layer": [
+        {
+          "mark": {"type": "bar", "size": 28},
+          "encoding": {
+            "y": {
+              "field": "previous_sum",
+              "type": "quantitative",
+              "title": "SST Anomaly (°C above long-term average)",
+              "scale": {"domain": [-0.75, 1.75]}
+            },
+            "y2": {"field": "sum"},
+            "color": {
+              "condition": [
+                {"test": "datum.label === '1998' || datum.label === 'End'", "value": "#81c784"},
+                {"test": "datum.bleaching === true && datum.amount > 0", "value": "#e53935"},
+                {"test": "datum.amount > 0", "value": "#ff8a65"},
+                {"test": "datum.sum < datum.previous_sum", "value": "#4dd0e1"}
+              ],
+              "value": "#ffb74d"
+            },
+            "tooltip": [
+              {"field": "label",     "type": "ordinal",      "title": "Year"},
+              {"field": "sum",       "type": "quantitative",  "title": "Cumulative anomaly (°C)", "format": ".2f"},
+              {"field": "amount",    "type": "quantitative",  "title": "Year-on-year change (°C)", "format": "+.2f"},
+              {"field": "bleaching", "type": "nominal",       "title": "Mass bleaching event?"},
+              {"field": "note",      "type": "nominal",       "title": "Context"}
+            ]
+          }
+        },
+        {
+          "mark": {
+            "type": "rule",
+            "color": "#09d6dd",
+            "opacity": 0.6,
+            "strokeWidth": 1.5,
+            "xOffset": -14,
+            "x2Offset": 14
+          },
+          "encoding": {
+            "x2": {"field": "lead"},
+            "y": {"field": "sum", "type": "quantitative"}
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "dy": {"expr": "datum.amount >= 0 ? -6 : 6"},
+            "baseline": {"expr": "datum.amount >= 0 ? 'bottom' : 'top'"},
+            "fontSize": 10,
+            "fontWeight": "bold",
+            "color": "white"
+          },
+          "encoding": {
+            "y": {"field": "sum", "type": "quantitative"},
+            "text": {"field": "sum", "type": "quantitative", "format": ".2f"}
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "fontWeight": "bold",
+            "baseline": "middle",
+            "fontSize": 9
+          },
+          "encoding": {
+            "y": {"field": "center", "type": "quantitative"},
+            "text": {"field": "text_amount", "type": "nominal"},
+            "color": {
+              "condition": [
+                {"test": "datum.label === '1998' || datum.label === 'End'", "value": "#81c784"}
+              ],
+              "value": "white"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "width": "container",
+      "height": 40,
+      "data": {
+        "values": [
+          {"category": "Rise — temperature warming",        "fill": "#ff8a65", "order": 1},
+          {"category": "Rise + mass bleaching event",       "fill": "#e53935", "order": 2},
+          {"category": "Drop — temperature cooling",        "fill": "#4dd0e1", "order": 3},
+          {"category": "Baseline / cumulative total",       "fill": "#81c784", "order": 4}
+        ]
+      },
+      "mark": {"type": "point", "filled": true, "size": 150, "shape": "square"},
+      "encoding": {
+        "x": {
+          "field": "category",
+          "type": "ordinal",
+          "sort": {"field": "order"},
+          "axis": {
+            "title": null,
+            "labelFontSize": 12,
+            "labelFontWeight": "normal",
+            "ticks": false,
+            "domain": false,
+            "labelColor": "#09d6dd",
+            "labelAngle": 0
+          }
+        },
+        "y": {"value": 20},
+        "color": {
+          "field": "fill",
+          "type": "nominal",
+          "scale": {
+            "domain": ["#ff8a65", "#e53935", "#4dd0e1", "#81c784"],
+            "range":  ["#ff8a65", "#e53935", "#4dd0e1", "#81c784"]
+          },
+          "legend": null
+        }
+      }
+    }
+  ]
+}

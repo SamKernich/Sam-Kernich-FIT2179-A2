@@ -1,0 +1,83 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Northern GBR Sea Surface Temperature Anomaly (1985–2024)",
+  "width": "container",
+  "height": "container",
+  "background": "transparent",
+  "config": {
+    "font": "DM Sans",
+    "view": { "stroke": "transparent", "step": 16 },
+    "axis": {
+      "domain": false,
+      "labelColor": "#09d6dd",
+      "titleColor": "#09d6dd",
+      "tickColor": "#09d6dd"
+    },
+    "legend": {
+      "labelColor": "#09d6dd",
+      "titleColor": "#09d6dd"
+    },
+    "title":{
+        "color": "#09d6dd", 
+        "fontSize": 14,
+        "font": "DM Sans"
+    }
+  },
+  "data": { "url": "data/gbr-sst-anomaly.csv" },
+  "transform": [
+    { "filter": "datum.region === 'Northern'" },
+    { "filter": "datum.sst_anomaly !== ''" },
+    { "calculate": "toNumber(datum.sst_anomaly)", "as": "anomaly" },
+    { "calculate": "substring(datum.date, 0, 4)", "as": "year" },
+    { "calculate": "substring(datum.date, 5, 7)", "as": "month_num" },
+    {
+      "calculate": "datum.month_num === '01' ? 'Jan' : datum.month_num === '02' ? 'Feb' : datum.month_num === '03' ? 'Mar' : datum.month_num === '04' ? 'Apr' : datum.month_num === '05' ? 'May' : datum.month_num === '06' ? 'Jun' : datum.month_num === '07' ? 'Jul' : datum.month_num === '08' ? 'Aug' : datum.month_num === '09' ? 'Sep' : datum.month_num === '10' ? 'Oct' : datum.month_num === '11' ? 'Nov' : 'Dec'",
+      "as": "month"
+    },
+    {
+      "aggregate": [{ "op": "mean", "field": "anomaly", "as": "mean_anomaly" }],
+      "groupby": ["year", "month", "month_num"]
+    }
+  ],
+  "mark": { "type": "rect", "stroke": null },
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "ordinal",
+      "title": "Year",
+      "axis": {
+        "labelAngle": -45,
+        "labelFontSize": 10,
+        "labelOverlap": "parity"
+      }
+    },
+    "y": {
+      "field": "month",
+      "type": "ordinal",
+      "title": "Month",
+      "sort": ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+      "axis": { "labelFontSize": 12 }
+    },
+    "color": {
+      "field": "mean_anomaly",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "redblue",
+        "reverse": true,
+        "domain": [-2, 2]
+      },
+      "legend": {
+        "title": "SST Anomaly (°C)",
+        "orient": "right",
+        "labelFontSize": 11,
+        "titleFontSize": 12,
+        "gradientLength": 200
+      }
+    },
+    "tooltip": [
+      { "field": "year",         "type": "ordinal",      "title": "Year" },
+      { "field": "month",        "type": "ordinal",      "title": "Month" },
+      { "field": "mean_anomaly", "type": "quantitative", "title": "SST Anomaly (°C)", "format": ".2f" }
+    ]
+  }
+}

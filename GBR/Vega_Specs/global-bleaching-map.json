@@ -1,0 +1,87 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": 460,
+  "autosize": { "type": "fit", "contains": "padding" },
+
+  "config": {
+    "background": "transparent",
+    "font": "Source Sans 3, sans-serif",
+    "view": { "stroke": "transparent" },
+    "legend": {
+      "labelColor":   "#6fb3c4",
+      "titleColor":   "#a8d4df",
+      "fillColor":    "rgba(0,20,35,0.82)",
+      "strokeColor":  "rgba(94,200,192,0.25)",
+      "cornerRadius": 6,
+      "padding":      8,
+      "titleFontSize": 11,
+      "labelFontSize": 10
+    }
+  },
+
+  "projection": { "type": "naturalEarth1" },
+
+  "layer": [
+    {
+      "description": "Ocean background sphere",
+      "data": { "sphere": true },
+      "mark": { "type": "geoshape", "fill": "#041828" }
+    },
+    {
+      "description": "Graticule grid lines every 30°",
+      "data": { "graticule": { "step": [30, 30] } },
+      "mark": {
+        "type": "geoshape",
+        "filled": false,
+        "stroke": "rgba(94,200,192,0.07)",
+        "strokeWidth": 0.6
+      }
+    },
+    {
+      "description": "Country polygons",
+      "data": {
+        "url": "https://vega.github.io/vega-datasets/data/world-110m.json",
+        "format": { "type": "topojson", "feature": "countries" }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#0d2535",
+        "stroke": "#1a4a6e",
+        "strokeWidth": 0.5
+      }
+    },
+    {
+      "description": "Survey site dots — data injected and field updated by JS",
+      "data": { "values": [] },
+      "mark": {
+        "type": "circle",
+        "size": 30,
+        "opacity": 0.85,
+        "stroke": "rgba(255,255,255,0.12)",
+        "strokeWidth": 0.5
+      },
+      "encoding": {
+        "longitude": { "field": "lon", "type": "quantitative" },
+        "latitude":  { "field": "lat", "type": "quantitative" },
+        "color": {
+          "field": "bleaching",
+          "type": "quantitative",
+          "scale": { "scheme": "reds" },
+          "legend": {
+            "title": "Bleaching (%)",
+            "gradientLength":    140,
+            "gradientThickness": 12
+          }
+        },
+        "tooltip": [
+          { "field": "location", "type": "nominal",      "title": "Location" },
+          { "field": "country",  "type": "nominal",      "title": "Country"  },
+          { "field": "ocean",    "type": "nominal",      "title": "Ocean"    },
+          { "field": "bleaching","type": "quantitative", "title": "Bleaching (%)", "format": ".2f" },
+          { "field": "year",     "type": "quantitative", "title": "Year"     }
+        ]
+      }
+    }
+  ]
+}

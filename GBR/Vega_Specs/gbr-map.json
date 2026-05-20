@@ -1,0 +1,155 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Interactive bubble map of AIMS LTMP manta-tow survey reefs on the Great Barrier Reef (1993–2023). Each circle = one reef, coloured and sized by live hard coral cover. Use the year slider and shelf filter to explore changes over time.",
+  "width": "container",
+  "height": 520,
+  "background": "transparent",
+  "config": {
+    "font": "DM Sans",
+    "view": { "stroke": "transparent" },
+    "legend": {
+      "labelColor": "#6fb3c4",
+      "titleColor": "#a8d4df",
+      "labelFontSize": 11,
+      "titleFontSize": 12
+    }
+  },
+  "params": [
+    {
+      "name": "year_param",
+      "value": 2023,
+      "bind": {
+        "input": "range",
+        "min": 1993,
+        "max": 2023,
+        "step": 1,
+        "name": "Survey Year: "
+      }
+    },
+    {
+      "name": "shelf_param",
+      "value": "all",
+      "bind": {
+        "input": "select",
+        "options": ["all", "I", "M", "O"],
+        "labels": ["All Shelf Positions", "Inshore", "Mid-shelf", "Outer"],
+        "name": "Shelf Filter: "
+      }
+    }
+  ],
+  "layer": [
+    {
+      "data": {
+        "url": "https://cdn.jsdelivr.net/npm/vega-datasets@2/data/world-110m.json",
+        "format": { "type": "topojson", "feature": "countries" }
+      },
+      "projection": {
+        "type": "mercator",
+        "center": [148, -18],
+        "scale": 1350
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#0796b28a",
+        "stroke": "#09d6dd",
+        "strokeWidth": 0.8
+      }
+    },
+    {
+      "data": { "url": "data/manta-tow-by-reef.csv" },
+      "transform": [
+        { "calculate": "toNumber(datum.REPORT_YEAR)", "as": "year" },
+        { "filter": "datum.year == year_param" },
+        { "filter": "shelf_param === 'all' || datum.SHELF === shelf_param" },
+        { "calculate": "toNumber(datum.LATITUDE)", "as": "lat" },
+        { "calculate": "toNumber(datum.LONGITUDE)", "as": "lon" },
+        { "calculate": "toNumber(datum.MEAN_LIVE_CORAL)", "as": "coral_pct" },
+        {
+          "calculate": "datum.MEAN_COTS_PER_TOW !== '' ? toNumber(datum.MEAN_COTS_PER_TOW) : 0",
+          "as": "cots_per_tow"
+        },
+        {
+          "calculate": "datum.SECTOR === 'TS' || datum.SECTOR === 'CG' || datum.SECTOR === 'PC' || datum.SECTOR === 'CL' || datum.SECTOR === 'CA' || datum.SECTOR === 'IN' ? 'Northern' : datum.SECTOR === 'CU' || datum.SECTOR === 'TO' || datum.SECTOR === 'WH' ? 'Central' : 'Southern'",
+          "as": "region"
+        },
+        {
+          "calculate": "datum.SHELF === 'I' ? 'Inshore' : datum.SHELF === 'M' ? 'Mid-shelf' : 'Outer'",
+          "as": "shelf_name"
+        }
+      ],
+      "projection": {
+        "type": "mercator",
+        "center": [148, -18],
+        "scale": 1350
+      },
+      "mark": {
+        "type": "circle",
+        "opacity": 0.82,
+        "stroke": "rgba(255,255,255,0.18)",
+        "strokeWidth": 0.5
+      },
+      "encoding": {
+        "longitude": { "field": "lon", "type": "quantitative" },
+        "latitude":  { "field": "lat", "type": "quantitative" },
+        "size": {
+          "field": "coral_pct",
+          "type": "quantitative",
+          "scale": { "domain": [0, 70], "range": [18, 520] },
+          "legend": {
+            "title": "Live Coral (%)",
+            "values": [5, 20, 40, 60],
+            "labelColor": "#09d6dd",
+            "titleColor": "#09d6dd"
+          }
+        },
+        "color": {
+          "field": "coral_pct",
+          "type": "quantitative",
+          "scale": {
+            "domain": [0, 10, 25, 45, 65],
+            "range": ["#e53935", "#ff8a65", "#ffb74d", "#81c784", "#4dd0e1"]
+          },
+          "legend": {
+            "title": "Live Coral (%)",
+            "labelColor": "#09d6dd",
+            "titleColor": "#09d6dd"
+          }
+        },
+        "tooltip": [
+          { "field": "REEF_NAME",    "type": "nominal",      "title": "Reef" },
+          { "field": "region",       "type": "nominal",      "title": "Region" },
+          { "field": "shelf_name",   "type": "nominal",      "title": "Shelf" },
+          { "field": "year",         "type": "quantitative", "title": "Survey Year" },
+          { "field": "coral_pct",    "type": "quantitative", "title": "Live Coral (%)", "format": ".1f" },
+          { "field": "cots_per_tow", "type": "quantitative", "title": "COTS / Tow",     "format": ".3f" }
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          { "label": "Northern", "lon": 145.4, "lat": -12.6 },
+          { "label": "Central",  "lon": 149.4, "lat": -18.2 },
+          { "label": "Southern", "lon": 151.4, "lat": -22.5 }
+        ]
+      },
+      "projection": {
+        "type": "mercator",
+        "center": [148, -18],
+        "scale": 1350
+      },
+      "mark": {
+        "type": "text",
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "fill": "#e8f5e9",
+        "opacity": 0.65
+      },
+      "encoding": {
+        "longitude": { "field": "lon", "type": "quantitative" },
+        "latitude":  { "field": "lat", "type": "quantitative" },
+        "text":      { "field": "label", "type": "nominal" }
+      }
+    }
+  ]
+}

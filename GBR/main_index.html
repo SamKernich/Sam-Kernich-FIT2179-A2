@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Great Barrier Reef</title>
+
+  <!-- Pure CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/3.0.0/pure-min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/3.0.0/grids-responsive-min.css"/>
+
+  <!-- Vega / Vega-Lite / Vega-Embed -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/5.30.0/vega.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega-lite/5.21.0/vega-lite.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega-embed/6.26.0/vega-embed.min.js"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="cube.css" />
+
+
+  <style>
+    /* ───── Design Tokens ───── */
+    :root {
+      --ocean-deep:   #001a2e;
+      --ocean-mid:    #002f4a;
+      --ocean-light:  #0a6e82;
+      --ocean-surface:#0e8fa8;
+      --coral:        #e07a5f;
+      --coral-light:  #f2a58e;
+      --seafoam:      #5ec8c0;
+      --seafoam-light:#94d2bd;
+      --sun:          #e9c46a;
+      --card-bg:      rgba(0, 30, 50, 0.72);
+      --card-bg-light:rgba(8, 55, 80, 0.65);
+      --text-dark:    #e8f4f8;
+      --text-mid:     #a8d4df;
+      --text-light:   #6fb3c4;
+      --section-gap:  2.4rem;
+      --card-radius:  10px;
+      --card-shadow:  0 4px 28px rgba(0,0,0,0.4);
+    }
+
+    /* ───── Base ───── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #001220;
+      background-image:
+        /* caustic light ripple top */
+        radial-gradient(ellipse 80% 40% at 50% -5%,  rgba(14,143,168,0.30) 0%, transparent 60%),
+        /* deep glow left */
+        radial-gradient(ellipse 55% 60% at 10% 30%,  rgba(0,80,120,0.35)   0%, transparent 65%),
+        /* mid reef glow right */
+        radial-gradient(ellipse 50% 50% at 90% 55%,  rgba(0,110,130,0.28)  0%, transparent 60%),
+        /* seafloor warmth at base */
+        radial-gradient(ellipse 100% 30% at 50% 105%, rgba(10,60,80,0.6)   0%, transparent 55%);
+      /* animated caustic texture overlay */
+      font-family: 'Source Sans 3', sans-serif;
+      color: var(--text-dark);
+      min-height: 100vh;
+    }
+
+    /* Animated light-ray / caustic pseudo-layer on html */
+    html {
+      background:
+        repeating-linear-gradient(
+          112deg,
+          transparent 0px, transparent 60px,
+          rgba(14,143,168,0.03) 60px, rgba(14,143,168,0.03) 62px
+        ),
+        repeating-linear-gradient(
+          68deg,
+          transparent 0px, transparent 80px,
+          rgba(94,200,192,0.025) 80px, rgba(94,200,192,0.025) 82px
+        );
+    }
+
+    /* Floating caustic light shimmer */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 30% 15% at 25% 20%, rgba(14,143,168,0.10) 0%, transparent 70%),
+        radial-gradient(ellipse 20% 10% at 70% 10%, rgba(94,200,192,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 25% 12% at 55% 40%, rgba(14,143,168,0.06) 0%, transparent 70%);
+      animation: caustic 12s ease-in-out infinite alternate;
+    }
+    @keyframes caustic {
+      0%   { opacity: 0.6; transform: scale(1)    translateY(0px); }
+      50%  { opacity: 1;   transform: scale(1.04) translateY(-8px); }
+      100% { opacity: 0.7; transform: scale(0.98) translateY(4px); }
+    }
+
+    /* Ensure content sits above pseudo-layer */
+    .wave-bar, .page-wrap, .wave-footer { position: relative; z-index: 1; }
+
+    /* ───── Wave header decoration ───── */
+    .wave-bar {
+      width: 100%;
+      height: 16px;
+      background: linear-gradient(90deg, var(--ocean-mid), var(--ocean-surface), var(--ocean-mid));
+      position: relative;
+      overflow: hidden;
+    }
+    .wave-bar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent 0, transparent 22px,
+        rgba(255,255,255,0.18) 22px, rgba(255,255,255,0.18) 44px
+      );
+    }
+
+    /* ───── Page wrapper ───── */
+    .page-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    /* ───── Hero / Title ───── */
+    .hero {
+      padding: 3rem 0 2rem;
+      border-bottom: 2px solid rgba(94,200,192,0.35);
+      margin-bottom: var(--section-gap);
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.6rem, 6vw, 4.2rem);
+      color: #e8f4f8;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 20px rgba(14,143,168,0.5);
+    }
+    .hero h1 span {
+      color: var(--seafoam);
+    }
+    .hero-sub {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--seafoam);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ───── Cards / Sections ───── */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--card-radius);
+      box-shadow: var(--card-shadow), inset 0 1px 0 rgba(255,255,255,0.07);
+      padding: 1.6rem 1.8rem;
+      margin-bottom: var(--section-gap);
+      border-top: 3px solid var(--ocean-surface);
+      border-left: 1px solid rgba(255,255,255,0.07);
+      border-right: 1px solid rgba(0,0,0,0.2);
+    }
+    .card.accent-coral   { border-top-color: var(--coral); }
+    .card.accent-sun     { border-top-color: var(--sun); }
+    .card.accent-seafoam { border-top-color: var(--seafoam); }
+
+    .card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      color: #e8f4f8;
+      margin-bottom: 0.75rem;
+    }
+    .card p, .card li {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text-mid);
+      font-weight: 300;
+    }
+
+    /* ───── Section labels ───── */
+    .section-label {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--seafoam);
+      margin-bottom: 0.4rem;
+    }
+
+    /* ───── Vega-Lite plot placeholder ───── */
+    .plot-container {
+      background: linear-gradient(135deg, var(--ocean-deep) 0%, var(--ocean-mid) 100%);
+      border-radius: var(--card-radius);
+      min-height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .plot-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 8px,
+        rgba(255,255,255,0.03) 8px,
+        rgba(255,255,255,0.03) 16px
+      );
+    }
+    /* Bubble animation for map placeholder */
+    .plot-container .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(148,210,189,0.18);
+      border: 1px solid rgba(148,210,189,0.35);
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50%       { transform: translateY(-12px) scale(1.04); }
+    }
+    .plot-label {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      color: rgba(255,255,255,0.7);
+    }
+    .plot-label svg { display: block; margin: 0 auto 0.6rem; opacity: 0.5; }
+    .plot-label span {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ───── Map + stat side-by-side ───── */
+    .map-stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      align-items: start;
+    }
+    @media (max-width: 640px) {
+      .map-stat-grid { grid-template-columns: 1fr; }
+    }
+    .stat-box {
+      background: rgba(0,20,35,0.5);
+      border: 1px solid rgba(94,200,192,0.15);
+      border-radius: var(--card-radius);
+      padding: 1.2rem;
+      height: 100%;
+    }
+    .stat-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: #e8f4f8;
+      margin-bottom: 0.5rem;
+    }
+    .stat-box p {
+      font-size: 0.92rem;
+      color: var(--text-mid);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+    .data-source {
+      font-size: 0.74rem;
+      color: var(--text-light);
+      margin-top: 0.6rem;
+      font-style: italic;
+    }
+
+    /* ───── Trends section ───── */
+    .trends-text {
+      background: rgba(0,80,120,0.25);
+      border-left: 4px solid var(--ocean-surface);
+      border-radius: 0 var(--card-radius) var(--card-radius) 0;
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 1.2rem;
+    }
+    .trends-text p {
+      font-size: 0.97rem;
+      color: var(--text-mid);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ───── Radial plot + economy ───── */
+    .radial-economy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+    @media (max-width: 640px) {
+      .radial-economy-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ───── Two-chart row (box/whisker + heatmap) ───── */
+    .two-chart-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+    @media (max-width: 640px) {
+      .two-chart-row { grid-template-columns: 1fr; }
+    }
+
+    /* ───── Ternary + scatter row ───── */
+    .ternary-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+    @media (max-width: 640px) {
+      .ternary-row { grid-template-columns: 1fr; }
+    }
+
+    /* ───── World reef map ───── */
+    .world-plot { min-height: 220px; }
+
+    /* ───── Footer ───── */
+    .footer-card {
+      background: rgba(0,10,20,0.75);
+      border: 1px solid rgba(94,200,192,0.2);
+      backdrop-filter: blur(12px);
+      border-radius: var(--card-radius);
+      padding: 1.4rem 1.8rem;
+      color: var(--seafoam-light);
+      margin-bottom: 0;
+    }
+    .footer-card h3 {
+      font-family: 'Playfair Display', serif;
+      color: #e8f4f8;
+      margin-bottom: 0.5rem;
+    }
+    .footer-card p {
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: rgba(148,210,189,0.75);
+    }
+    .footer-card .byline {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 0.8rem;
+    }
+
+    /* ───── Wave footer decoration ───── */
+    .wave-footer {
+      background: linear-gradient(90deg, var(--ocean-mid), var(--ocean-surface), var(--ocean-mid));
+      height: 10px;
+      margin-top: 1rem;
+    }
+
+    /* ───── Link styles ───── */
+   .link {
+      color: #09d6dd;          /* ← default colour */
+      text-decoration: none;
+      border-bottom: 1px solid rgba(94,200,192,0.35);
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .link:hover {
+      color: var(--seafoam-light);     /* ← hover colour */
+      border-bottom-color: var(--seafoam-light);
+    }
+
+    /* ───── Utility ───── */
+    .mb-sm { margin-bottom: 0.8rem; }
+    .mt-sm { margin-top: 0.8rem; }
+  </style>
+</head>
+<body>
+
+<!-- Top wave bar -->
+<div class="wave-bar"></div>
+
+<div class="page-wrap">
+
+  <!-- ═══════════════════════════════
+       HERO / TITLE
+  ═══════════════════════════════ -->
+  <header class="hero">
+    
+    <h1>Great Barrier <span>Reef</span></h1>
+  </header>
+
+
+  <!-- ═══════════════════════════════
+       INTRODUCTION TEXT
+  ═══════════════════════════════ -->
+  <section class="card">
+    <div class="section-label">Introduction</div>
+    <p>
+      The Great Barrier Reef is the world's largest coral reef ecosystem, stretching over 2,300 km along the
+      northeast coast of Australia. Home to thousands of species of marine life, it is one of the seven natural
+      wonders of the world and a UNESCO World Heritage Site. Yet decades of rising ocean temperatures, agricultural
+      runoff, and coastal development have pushed the reef to a critical threshold. This dashboard presents an insight into
+      the current state of the reef, the trends driving its decline, and the urgent need for conservation action to preserve this irreplaceable ecosystem.
+    </p>
+  </section>
+
+
+  <!-- ═══════════════════════════════
+       MAP + AFFECTED REGIONS STATS
+  ═══════════════════════════════ -->
+  <section class="card accent-seafoam">
+    <div class="section-label">Affected Regions</div>
+    <div class="map-stat-grid">
+      <!-- Map plot -->
+      <div>
+        <div id="map-plot" style="width:100%; min-height:540px;"></div>
+        <p class="data-source mt-sm">Source: <a href="https://apps.aims.gov.au/metadata/view/5bb9a340-4ade-11dc-8f56-00008a07204e" target="_blank" class="link">AIMS LTMP Manta Tow Dataset (doi:10.25845/5c09b0abf315a)</a></p>
+      </div>
+
+      <!-- Stats text -->
+      <div class="stat-box">
+        <h3>GBR Affected Regions</h3>
+        <p>
+          The Australian Institute of Marine Science (AIMS) monitors coral cover across 64 key reefs spanning the length of the 
+          Great Barrier Reef. Over the last 2 decades, the reef has gone through several bleaching periods, with the most severe impacts observed in the 
+          northern and central sections. A bleaching event occurs when the water temperature increases to the point that the coral have to expel the 
+          colourful algae (zooxanthellae) that live in their tissues, causing them to turn white. If stressful conditions persist, the damage is irreversible and the coral can die.
+          On the map, the colour gradient represents the average live coral cover percentage across all surveyed reefs in each region, with cooler shades indicating healthier coral cover and warmer shades indicating more severe degradation.
+          Fortunately, some regions of the reef have increases in live coral as the water temparetures have returned to equilibrium before the coral have died, however this is not the case across the whole reef.
+          
+        </p>
+        <p style="margin-top:0.8rem;">
+          Over <strong>50%</strong> of shallow-water coral cover has been lost since the 1980s, with mass
+          bleaching events recorded in 1998, 2002, 2006, 2016, 2017, 2020, 2022, and 2024.
+          Unfortunately, the frequency of bleaching events has increased to the point where many reefs are now experiencing back-to-back bleaching, with insufficient time for recovery between episodes. 
+          The 2016-2017 bleaching event alone resulted in an estimated <strong>22%</strong> loss of coral cover across the entire reef.
+        </p>
+        <p class="data-source">Source: <a href="https://www.barrierreef.org/the-reef/threats/coral-bleaching" target="_blank" class="link">Great Barrier Reef Foundation</a></p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════
+       TRENDS & ISSUES (right-column top in sketch)
+  ═══════════════════════════════ -->
+  <section class="card accent-coral">
+    <div class="section-label">Trends &amp; Issues Affecting the GBR</div>
+    <div class="trends-text">
+      <p>
+        The reef faces compounding pressures: ocean warming drives bleaching, agricultural runoff fuels crown-of-thorns
+        starfish outbreaks and algae overgrowth, cyclones cause acute physical damage, and ocean acidification degrades
+        carbonate structures. Sea surface temperatures (SST) around the GBR have risen by approximately <strong>1°C</strong>
+        above pre-industrial levels, with projections indicating further increases under all emissions scenarios.
+
+        The following two visualizations show the SST anomolies for each region of the GBR and the overall trend across the entire reef. 
+      </p>
+    </div>
+  </section>
+
+  <section class="card accent-seafoam">
+    <div class="section-label" style="padding-left:1.3rem;">
+      Regional SST Anomalies across the GBR
+    </div>
+
+    <div class="map-stat-grid">
+
+      <!-- LEFT COLUMN: the 3D cube -->
+      <div>
+        <!-- cube.js renders everything into this div -->
+        <div id="gbr-cube-mount"></div>
+        <p class="data-source mt-sm">
+          Source: <a href="https://coralreefwatch.noaa.gov/product/vs/data/gbr_northern.txt" target="_blank" class="link">NOAA Coral Reef Watch Virtual Stations</a>
+        </p>
+      </div>
+
+      <!-- RIGHT COLUMN: explanatory text -->
+      <div class="stat-box">
+        <h3><strong>Discover:</strong> SST Anomaly</h3>
+        <p>
+          Each face of the cube represents the Sea Surface Temperautre Anonamly values, recorded every month since 1985, for a different region
+          of the Great Barrier Reef. The National Environmental Satellite, Data, and Information Service (NESDIS) Coral Reef Watch program collect data 
+          every day using the satelite readings. The broad trends across all 3 regions are quite clear; surface temperature is rising and will continue to do so, causing
+          more frequent bleaching events and killing of our reef ecosystem.
+        </p>
+        <p style="margin-top:0.8rem;">
+          The warming trend from the mid-1990s onward is clearly visible across all three regions,
+          with the most extreme positive anomalies coinciding with the major bleaching events of
+          1998, 2002, 2016, 2020, 2022, and 2024. Use the buttons below the cube to snap to each
+          region face, or drag to rotate freely.
+        </p>
+        <p style="margin-top:0.8rem;">
+          Data sourced from the NOAA Coral Reef Watch 5 km Regional Virtual Stations,
+          which aggregate daily satellite SST readings across all reef pixels within each region.
+        </p>
+        <p class="data-source">
+          Source: <a href="https://coralreefwatch.noaa.gov/" target="_blank" class="link">NOAA Coral Reef Watch</a>
+        </p>
+      </div>
+
+    </div>
+  </section>
+  
+  
+
+  <!-- ═══════════════════════════════
+       Temperature Chart
+  ═══════════════════════════════ -->
+  <section class="card accent-sun" style="overflow:visible; padding-left:0.5rem; padding-right:0.5rem; padding-bottom: 3rem;">
+    <div class="section-label" style="padding-left:1.3rem;">SST Anomaly of the entire GBR</div>
+    <div id="waterfall-chart" style="width:100%"></div>
+    <p class="data-source" style="padding-left:1.3rem;" >
+          Source: <a href="https://www.aims.gov.au/research-topics/monitoring-and-discovery/sea-temperatures" target="_blank" class="link">Derived Yearly SST Anomalies change across the GBR</a>
+        </p>
+  </section>
+
+  <!-- ═══════════════════════════════
+       REEF HISTORY & DECLINE TEXT
+  ═══════════════════════════════ -->
+  <section class="card">
+    <div class="section-label">Reef History &amp; Decline</div>
+    <p>
+      Coral reefs have existed in the region for at least 600,000 years, though the current reef structure
+      formed predominantly over the last 8,000 years. Scientific monitoring began in earnest in the 1980s,
+      revealing a dramatic long-term decline in hard coral cover. Early threats centred on overfishing and
+      direct physical damage, but by the 2000s climate change had emerged as the dominant driver of decline —
+      with mass bleaching events now occurring at a frequency that prevents full recovery between episodes.
+    </p>
+    <p style="margin-top:0.8rem;">
+      Additionally, Crown of Thorn Starfish (COTS) benefit from overfishing and feast on live coral tissue. When these populations boom, 
+      the threat to coral reefs is significant, with a single COTS capable of consuming up to 10 square meters of coral per year. 
+      Outbreaks have been linked to agricultural runoff, which increases nutrient levels in the water and promotes the growth of phytoplankton that COTS larvae feed on. 
+      The combination of rising sea temperatures and increased nutrient runoff has led to more frequent and severe COTS outbreaks, further exacerbating the decline of coral cover on the GBR.
+    </p>
+  </section>
+
+   <!-- ═══════════════════════════════
+       COTS TIMELINE — ANIMATED
+  ═══════════════════════════════ -->
+  <section class="card accent-sun">
+    <div class="section-label" style="padding-left:1.3rem;">Crown-of-Thorns Starfish Outbreaks</div>
+
+    <!-- Controls row -->
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
+                gap:10px; padding: 0 0.2rem 0.8rem;">
+      <p style="padding-left:1.3rem; margin:0; font-size:0.92rem; color:var(--text-mid); max-width:700px;">
+        Mean COTS detections per manta tow by GBR region, 1993–2023. Orange bands = bleaching event windows. Dashed red line = active-outbreak threshold (0.22 COTS/tow).
+      </p>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span id="year-counter"
+              style="font-family:monospace; font-size:0.95rem; color:var(--seafoam);
+                     min-width:36px; font-weight:600;"></span>
+        <button id="replay-cots-btn"
+                style="padding:5px 14px; border-radius:999px;
+                       border:1px solid rgba(94,200,192,0.4); background:transparent;
+                       cursor:pointer; font-family:inherit; font-size:0.8rem;
+                       color:var(--text-mid); transition:color 0.2s, border-color 0.2s;">
+          ↺ Replay
+        </button>
+      </div>
+    </div>
+
+    <!-- Chart target -->
+    <div id="timeline-chart" style="width:100%; min-height:320px;"></div>
+
+    <!-- Bleaching band legend -->
+    <div style="display:flex; align-items:center; gap:8px; margin-top:10px;">
+      <div style="width:18px; height:10px; background:#ff6b35; opacity:0.35; border-radius:2px;"></div>
+      <span style="font-size:0.75rem; color:var(--text-light);">
+        Bleaching event windows (1998, 2002, 2016, 2020, 2022)
+      </span>
+    </div>
+
+    <p style="font-size:0.74rem; color:var(--text-light); margin-top:0.6rem; font-style:italic;">
+      Source:
+      <a href="https://doi.org/10.25845/5c09b0abf315a" target="_blank" class="link">
+        AIMS LTMP Manta Tow Dataset — doi:10.25845/5c09b0abf315a
+      </a>
+    </p>
+  </section>
+
+
+  <!-- ═══════════════════════════════
+       Parallel Coordinate chart
+  ═══════════════════════════════ -->
+
+  <section class="card accent-sun">
+    <div class="section-label" style="padding-left:1.3rem;">Overall Reef Trends</div>
+    <div id="parallel-coordinate" style="width:100%"></div>
+     <p style="padding-left:1.3rem;" color:var(--text-light); margin-top:0.6rem; font-style:italic;">
+      Source:
+      <a href="https://doi.org/10.25845/5c09b0abf315a" target="_blank" class="link">
+        AIMS LTMP Manta Tow Dataset — doi:10.25845/5c09b0abf315a
+      </a>
+    </p>
+  </section>
+
+  <section class="card accent-sun">
+    <div class="section-label" style="padding-left:1.3rem;">Analysing the Data</div>
+    <p style="padding-left:1.3rem;">
+      AIMS has done a fantastic job at monitoring the state of the reef over the last few decades, tracking key metrics including type of coral cover
+      soft, hard, the percentage of live and dead coral. The tracking of COTS, indicting periods of declining reef health is inversely related to 
+      the population of coral trout, which protect the reef from preying COTS, maintaing a sustainable coral ecosystm.
+    </p>
+  </section>
+
+
+
+  <!-- ═══════════════════════════════
+       TERNARY MAP + SCATTER
+  ═══════════════════════════════ -->
+  <section class="card accent-seafoam">
+    <div class="section-label">Ternary Map of Coral substrates </div>
+    <div class="map-stat-grid">
+      <div>
+
+        <div id="ternary-plot" style="width:100%; min-height:300px;"></div>
+        <p> Source: 
+          <a href="https://doi.org/10.25845/5c09b0abf315a" target="_blank" class="link">
+        AIMS LTMP Manta Tow Dataset — doi:10.25845/5c09b0abf315a
+      </a>
+        </p>
+         
+      </div>
+      
+      <div>
+        <p class="section-label mb-sm">What is this?</p>
+      <div class="stat-box"  style="min-height:200px;">
+          
+          <p>
+            Hard coral is the living, calcified structure that builds the reef framework, while soft coral is more flexible but doesn't contribute to 
+            the growth of the reefs foundation. Soft coral provides shelter and habitats for marine life, and can be more resilient to environmental stressors.
+              A shift from hard to soft coral dominance can indicate a stressed reef ecosystem, as hard corals are more vulnerable to bleaching and mortality under rising sea temperatures. 
+              The ternary plot shows the relative proportions of hard coral, soft coral, and dead coral across reef sites over times. It is overlayed with the mean COTS per year, 
+              highlighting a trend in higher COTS populations being associated with a higher proportion of dead coral.
+          </p>
+          <p style="color:var(--text-light); margin-top:0.6rem; font-style:italic;">
+            Source:
+               <a href="https://www.aumscuba.com/hard-coral-v-soft-coral-whats-the-difference/" target="_blank" class="link">Hard verse Soft coral  </a>
+          </p>
+          
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <!-- ── Charts: treemap + bubble side by side ── -->
+  <section class="card accent-seafoam">
+    <div class="section-label">Public Perception of the Great Barrier Reef</div>
+    <div class="map-stat-grid">
+
+      <div>
+        <p style="color:var(--text-light);font-size:0.78rem;font-weight:600;letter-spacing:0.08em;
+                  text-transform:uppercase;margin-bottom:0.5rem;">
+          How Australians Describe the Reef
+        </p>
+        <div id="word-cloud" style="width:100%; min-height:360px;"></div>
+        <p style="font-size:0.72rem;color:var(--text-light);margin-top:0.4rem;font-style:italic;">
+          Area ∝ number of mentions &nbsp;
+        </p>
+        <p style="color:var(--text-light); margin-top:0.6rem; font-style:italic;  font-size:0.72rem;">
+            Source:
+               <a href="https://data.csiro.au/collection/csiro:74207?_st=browse&_str=35&_si=1&browseType=kw&browseValue=Great%20Barrier%20Reef" target="_blank" class="link">
+                Hobman, Elizabeth V; Benham, Claudia; et al. (2025): Social and Economic Long Term Monitoring Program (SELTMP) for the Great Barrier Reef data, 2025. v1. CSIRO. Data Collection. https://doi.org/10.25919/3rj4-kc88 </a>
+          </p>
+      </div>
+
+      <div>
+        <p style="color:var(--text-light);font-size:0.78rem;font-weight:600;letter-spacing:0.08em;
+                  text-transform:uppercase;margin-bottom:0.5rem;">
+          Main Threats Identified
+        </p>
+        <div id="threat-bubbles" style="width:100%; min-height:360px;"></div>
+        <p style="font-size:0.72rem;color:var(--text-light);margin-top:0.4rem;font-style:italic;">
+          Bubble size ∝ number of mentions &nbsp;
+        </p>
+        <p style="color:var(--text-light); margin-top:0.6rem; font-style:italic; font-size:0.72rem;">
+            Source:
+               <a href="https://data.csiro.au/collection/csiro:74207?_st=browse&_str=35&_si=1&browseType=kw&browseValue=Great%20Barrier%20Reef" target="_blank" class="link">
+                Hobman, Elizabeth V; Benham, Claudia; et al. (2025): Social and Economic Long Term Monitoring Program (SELTMP) for the Great Barrier Reef data, 2025. v1. CSIRO. Data Collection. https://doi.org/10.25919/3rj4-kc88 </a>
+          </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Descriptive text below the charts ── -->
+  <section class="card">
+    <div class="section-label mb-sm">What is this?</div>
+    <p>
+      Beyond the ecological data, there is much concern in the community about the survival of the reef.
+      CSIRO, under the Social and Economic Long Term Monitoring Program (SELTMP), has been tracking public
+      sentiment and awareness regarding the reef's health. The survey asks people for their perceptions about
+      the threats facing the reef, what it means to them, and a variety of other questions.
+    </p>
+    <p style="margin-top:0.8rem;">
+      The treemap (left) shows the words survey respondents chose to describe the reef — <em>Beautiful</em>,
+      <em>Coral</em>, and <em>Fish</em> dominate, reflecting deep emotional attachment. The bubble chart (right)
+      maps the threats they named most: <em>Pollution</em> and <em>Climate Change</em> dwarf all others.
+      The conviction is clear — the reef is loved, and the threats are well understood. It is time for
+      meaningful action to protect and restore this irreplaceable ecosystem for future generations.
+    </p>
+    <p style="color:var(--text-light);margin-top:0.8rem;font-size:0.74rem;font-style:italic;">
+      Source:
+      <a href="https://data.csiro.au/collection/csiro:74207?_st=browse&_str=35&_si=1&browseType=kw&browseValue=Great%20Barrier%20Reef"
+         target="_blank" class="link">
+        Hobman et al. (2025) — SELTMP for the Great Barrier Reef, CSIRO. doi:10.25919/3rj4-kc88
+      </a>
+    </p>
+  </section>
+
+
+  <!-- ═══════════════════════════════
+       WORLD REEF MAP
+  ═══════════════════════════════ -->
+  <section class="card accent-seafoam">
+    <div class="section-label">Global Coral Reef Conditions (1980–2020)</div>
+    <p style="font-size:0.9rem;color:var(--text-mid);line-height:1.65;margin-bottom:1rem;">
+      The focus of this dashboard is the alarming rate of decline of the Great Barrier Reef. Unfortunately, the GBR is not alone in facing these challenges. 
+      Coral reefs worldwide are experiencing similar pressures and declines due to rising sea temperatures, pollution, overfishing to name a few. 
+      This serves as a <strong>stark</strong> reminder of the urgent need for action to protect these vital ecosystems.
+
+    </p>
+
+    <p style="margin-top:0.8rem;">
+      
+      This interactive world map has 4 attributes: bleaching percentage, coral cover percentage, SSA and COTS.
+      Each dot marks an individual reef survey site and the intensity of the attribute is indictaed by the colour intensity.Select a parameter from the dropdown and
+      drag the year slider to explore how bleaching intensity, coral cover, sea surface temperature,
+      and temperature anomalies have shifted across the world's reef systems over four decades.
+      
+    </p>
+    
+    <!-- Controls injected here by JS (separate from chart so CSS overlays don't block events) -->
+    <div id="gbm-controls"></div>
+    <!-- Vega-Lite chart target (plain div — no plot-container overlay) -->
+    <div id="gbm-chart" style="width:100%; min-height:460px; border-radius:8px; overflow:hidden;"></div>
+    <p class="data-source mt-sm">
+      Source: <a href="https://doi.org/10.25573/serc.14555977" target="_blank" class="link">
+        Donner et al. (2022) — Global Bleaching &amp; Environmental Database (doi:10.25573/serc.14555977)
+      </a>
+    </p>
+  </section>
+
+
+  <!-- ═══════════════════════════════
+       DATA + AI REFERENCE / FOOTER
+  ═══════════════════════════════ -->
+  <section class="footer-card">
+    <h3>Data &amp; AI Reference</h3>
+    <p>
+      Data sources include the Australian Institute of Marine Science (AIMS) Long-Term Monitoring Program,
+      the Great Barrier Reef Marine Park Authority (GBRMPA), NOAA Coral Reef Watch, Deloitte Access Economics,
+      and the Australian Bureau of Statistics. AI-assisted narrative text generated with Claude (Anthropic).
+      All visualisations produced using Vega-Lite embedded via vega-embed.
+    </p>
+    <div class="byline">
+      <strong style="color:rgba(255,255,255,0.7);">Sam Kernich</strong> &nbsp;·&nbsp; 3386 3288 &nbsp;·&nbsp; Friday 8am Studio
+    </div>
+  </section>
+
+</div><!-- /page-wrap -->
+
+<!-- Bottom wave bar -->
+<div class="wave-footer"></div>
+
+
+<!-- ─────────────────────────────────────────────────────────
+     VEGA-LITE EMBED DEMO
+     Replace the spec objects below with your own Vega-Lite specs.
+     Each vegaEmbed call targets the matching <div id="..."> above.
+───────────────────────────────────────────────────────────── -->
+<script>
+  // ── Shared Vega-Lite theme matching the GBR palette ──
+  const gbrConfig = {
+    background: "transparent",
+    font: "Source Sans 3, sans-serif",
+    axis: {
+      labelColor: "#6fb3c4",
+      titleColor: "#a8d4df",
+      gridColor: "rgba(94,200,192,0.12)",
+      domainColor: "rgba(94,200,192,0.3)",
+      tickColor: "rgba(94,200,192,0.3)"
+    },
+    legend: { labelColor: "#6fb3c4", titleColor: "#a8d4df" },
+    title:  { color: "#e8f4f8", font: "Playfair Display, serif" },
+    range: {
+      category: ["#5ec8c0","#e07a5f","#e9c46a","#94d2bd","#0a6e82","#f2a58e","#b7e4c7"]
+    }
+  };
+
+  const embedOpts = {
+    actions: false,
+    renderer: "svg"
+  };
+
+  // ── MAP: GBR bubble map from external JSON ──
+  vegaEmbed("#map-plot",           "Vega_Specs/gbr-map.json",           embedOpts);
+  vegaEmbed("#waterfall-chart",    "Vega_Specs/sst-anomaly.json",       embedOpts);
+  vegaEmbed("#parallel-coordinate","Vega_Specs/parallel_chart.json",    embedOpts);
+  vegaEmbed("#radial-plot",        "Vega_Specs/reef-distribution-2025.json", embedOpts);
+  vegaEmbed("#ternary-plot",       "Vega_Specs/ternary-coral.json",     embedOpts);
+  vegaEmbed("#word-cloud",     "Vega_Specs/describe_reef.json",  embedOpts)
+    .catch(function(e){ console.error("[treemap]",  e); });
+  vegaEmbed("#threat-bubbles", "Vega_Specs/threat-bubbles.json", embedOpts)
+    .catch(function(e){ console.error("[bubbles]",  e); });
+  // ── EXAMPLE: Bar chart (sector) ──
+  
+</script>
+
+<!-- COTS timeline animation -->
+<script src="js/cots-timeline-animation.js"></script>
+<script src="js/cube.js"></script>
+<!-- Global bleaching world map (dropdown + year slider) -->
+<script src="js/global-bleaching-map.js"></script>
+<script>
+  GBRCube.init('gbr-cube-mount');
+</script>
+
+</body>
+</html>

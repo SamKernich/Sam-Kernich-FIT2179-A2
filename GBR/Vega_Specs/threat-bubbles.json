@@ -1,0 +1,90 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Packed bubble chart of perceived threats to the Great Barrier Reef",
+  "width": 480,
+  "height": 360,
+  "padding": 0,
+  "background": "transparent",
+
+  "data": [
+    {
+      "name": "tree",
+      "url": "data/threat-words.json",
+      "format": { "type": "json" },
+      "transform": [
+        {
+          "type": "stratify",
+          "key": "id",
+          "parentKey": "parent"
+        },
+        {
+          "type": "pack",
+          "field": "count",
+          "sort": { "field": "value", "order": "descending" },
+          "size": [ { "signal": "width" }, { "signal": "height" } ],
+          "as": [ "x", "y", "r", "depth", "children" ]
+        }
+      ]
+    },
+    {
+      "name": "leaves",
+      "source": "tree",
+      "transform": [
+        { "type": "filter", "expr": "datum.depth > 0" }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "linear",
+      "domain": { "data": "leaves", "field": "count" },
+      "range": [ "#2d4a6e", "#e07a5f" ]
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "symbol",
+      "from": { "data": "leaves" },
+      "encode": {
+        "enter": {
+          "x":           { "field": "x" },
+          "y":           { "field": "y" },
+          "size":        { "signal": "4 * datum.r * datum.r" },
+          "shape":       { "value": "circle" },
+          "fill":        { "scale": "color", "field": "count" },
+          "stroke":      { "value": "rgba(255,255,255,0.18)" },
+          "strokeWidth": { "value": 0.8 },
+          "tooltip":     { "signal": "{'Threat': datum.text, 'Mentions': datum.count}" }
+        },
+        "update": { "fillOpacity": { "value": 0.88 } },
+        "hover": {
+          "fillOpacity": { "value": 1 },
+          "stroke":      { "value": "#e9c46a" },
+          "strokeWidth": { "value": 2 }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": { "data": "leaves" },
+      "encode": {
+        "enter": {
+          "x":           { "field": "x" },
+          "y":           { "field": "y" },
+          "text":        { "field": "text" },
+          "align":       { "value": "center" },
+          "baseline":    { "value": "middle" },
+          "fill":        { "value": "#e8f4f8" },
+          "fontWeight":  { "value": "600" },
+          "fontFamily":  { "value": "Source Sans 3, sans-serif" },
+          "fontSize":    { "signal": "clamp(datum.r / 3.5, 8, 13)" },
+          "limit":       { "signal": "datum.r * 2 - 6" },
+          "fillOpacity": { "signal": "datum.r > 14 ? 1 : 0" }
+        }
+      }
+    }
+  ]
+}

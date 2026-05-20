@@ -1,0 +1,52 @@
+	<?xml version="1.0" encoding="UTF-8"?>
+<dcterms:dc xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://purl.org/dc/elements/1.1/ https://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd">
+  <dc:title>Social and Economic Long Term Monitoring Program (SELTMP) for the Great Barrier Reef data, 2025</dc:title>
+  <dc:creator>Elizabeth V Hobman</dc:creator>
+  <dc:subject>Population trends and policies</dc:subject>
+  <dc:subject>Recreation, leisure and tourism geography</dc:subject>
+  <dc:subject>Other human society not elsewhere classified</dc:subject>
+  <dc:subject>Sociological methodology and research methods</dc:subject>
+  <dc:subject>Conservation and biodiversity</dc:subject>
+  <dc:subject>Citizenship</dc:subject>
+  <dc:subject>Applied sociology, program evaluation and social impact assessment</dc:subject>
+  <dc:subject>Human geography not elsewhere classified</dc:subject>
+  <dc:subject>Social psychology</dc:subject>
+  <dc:subject>Environmental management</dc:subject>
+  <dc:subject>Social change</dc:subject>
+  <dc:subject>Sociology and social studies of science and technology</dc:subject>
+  <dc:subject>Demography not elsewhere classified</dc:subject>
+  <dc:subject>Other environmental sciences not elsewhere classified</dc:subject>
+  <dc:subject>Natural resource management</dc:subject>
+  <dc:description>SELTMP is assisting Reef managers and other decision-makers within the Great Barrier Reef region to incorporate the human dimension into their planning and management. Analogous to the Australian Census, SELTMP gathers long-term data specific to Reef users, communities and industries, enabling new insights into relationships, vulnerabilities and dependencies between people and the natural resources.</dc:description>
+  <dc:publisher>CSIRO</dc:publisher>
+  <dc:contributor>Claudia Benham</dc:contributor>
+  <dc:contributor>Megan Bickle</dc:contributor>
+  <dc:contributor>Anthea Coggan</dc:contributor>
+  <dc:contributor>Kerry Collins</dc:contributor>
+  <dc:contributor>Kara-Mae Coulter-Atkins</dc:contributor>
+  <dc:contributor>Michelle Dyer</dc:contributor>
+  <dc:contributor>Alicia Forbes</dc:contributor>
+  <dc:contributor>Daniel Grainger</dc:contributor>
+  <dc:contributor>Georgina Gurney</dc:contributor>
+  <dc:contributor>Udita Jahan</dc:contributor>
+  <dc:contributor>Katerina Kanakis</dc:contributor>
+  <dc:contributor>Paulina Kaniewska</dc:contributor>
+  <dc:contributor>Hannah King</dc:contributor>
+  <dc:contributor>Jacueline Lau</dc:contributor>
+  <dc:contributor>Sumia Munia</dc:contributor>
+  <dc:contributor>Emily Ogier</dc:contributor>
+  <dc:contributor>Petina Pert</dc:contributor>
+  <dc:contributor>Gabriela Scheufele</dc:contributor>
+  <dc:contributor>Tracy Schultz</dc:contributor>
+  <dc:contributor>Lauren Vogelsang</dc:contributor>
+  <dc:contributor>Samuel Williams</dc:contributor>
+  <dc:contributor>Matt Curnock</dc:contributor>
+  <dc:type />
+  <dc:format />
+  <dc:identifier>https://doi.org/10.25919/3rj4-kc88</dc:identifier>
+  <dc:language />
+  <dcterms:temporal xsi:type="dcterms:Period">start=2025-01-01; end=2025-01-01</dcterms:temporal>
+  <dcterms:spatial xsi:type="dcterms:Box">northlimit=-10.4682; southlimit=-24.4984; westlimit=142.4646; eastLimit=154.0010; projection=WGS84</dcterms:spatial>
+  <dc:rights />
+</dcterms:dc>
+
