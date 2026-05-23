@@ -737,7 +737,7 @@
     <!-- Vega-Lite chart target (plain div — no plot-container overlay) -->
     <div id="gbm-chart" style="width:100%; min-height:460px; border-radius:8px; overflow:hidden;"></div>
     <p class="data-source mt-sm">
-      Source: <a href="https://doi.org/10.25573/serc.14555977" target="_blank" class="link">
+      Source: <a href="https://www.bco-dmo.org/dataset/773466" target="_blank" class="link">
         Donner et al. (2022) — Global Bleaching &amp; Environmental Database (doi:10.25573/serc.14555977)
       </a>
     </p>
@@ -751,9 +751,12 @@
     <h3>Data &amp; AI Reference</h3>
     <p>
       Data sources include the Australian Institute of Marine Science (AIMS) Long-Term Monitoring Program,
-      the Great Barrier Reef Marine Park Authority (GBRMPA), NOAA Coral Reef Watch, Deloitte Access Economics,
-      and the Australian Bureau of Statistics. AI-assisted narrative text generated with Claude (Anthropic).
-      All visualisations produced using Vega-Lite embedded via vega-embed.
+      the Great Barrier Reef Marine Park Authority (GBRMPA), NOAA Coral Reef Watch, CSIRO Social and Economic Long-Term Monitoring Plan (SELTMP) and Biological and Chemical Oceanography
+      Data Management Office (BCODMO). All data sources are also listed and referenced when used throughout the webpage.
+    </p>
+    <p style="margin-top:0.8rem;">
+      Webpage layout using HTML and CSS, visualization created using Vegalite. Generative AI (Claude, Anthropic) was used to aid with webpage layout and code structure. 
+      All data, analysis, design decisions and visual elements are the authors own.
     </p>
     <div class="byline">
       <strong style="color:rgba(255,255,255,0.7);">Sam Kernich</strong> &nbsp;·&nbsp; 3386 3288 &nbsp;·&nbsp; Friday 8am Studio
@@ -805,7 +808,7 @@
     .catch(function(e){ console.error("[treemap]",  e); });
   vegaEmbed("#threat-bubbles", "Vega_Specs/threat-bubbles.json", embedOpts)
     .catch(function(e){ console.error("[bubbles]",  e); });
-  // ── EXAMPLE: Bar chart (sector) ──
+ 
   
 </script>
 
