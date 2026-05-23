@@ -63,7 +63,11 @@
           "strokeWidth": { "value": 1.5 },
           "tooltip":     { "signal": "{'Word': datum.text, 'Mentions': datum.count}" }
         },
-        "update": { "fillOpacity": { "value": 0.92 } },
+        "update": {
+          "fillOpacity": { "value": 0.92 },
+          "stroke":      { "value": "rgba(0,18,30,0.8)" },
+          "strokeWidth": { "value": 1.5 }
+        },
         "hover": {
           "fillOpacity": { "value": 1 },
           "stroke":      { "value": "#e9c46a" },

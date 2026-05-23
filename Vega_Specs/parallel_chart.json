@@ -16,7 +16,7 @@
     },
     "view": { "stroke": null },
     "style": {
-      "label": { "baseline": "middle", "align": "right", "dx": -10, "fill": "#64b5f6", "fontSize": 10 },
+      "label": { "baseline": "middle", "align": "right", "dx": -10, "color": "#90caf9", "fontSize": 10 },
       "tick":  { "orient": "horizontal" }
     }
   },
@@ -89,6 +89,18 @@
     {
       "calculate": "(datum.min + datum.max) / 2",
       "as": "mid"
+    },
+    {
+      "calculate": "datum.key === 'Region (encoded)' ? 'Southern' : datum.key === 'Shelf (encoded)' ? 'Outer' : format(datum.max, '.2f')",
+      "as": "top_label"
+    },
+    {
+      "calculate": "datum.key === 'Region (encoded)' ? 'Central' : datum.key === 'Shelf (encoded)' ? 'Mid-shelf' : format(datum.mid, '.2f')",
+      "as": "mid_label"
+    },
+    {
+      "calculate": "datum.key === 'Region (encoded)' ? 'Northern' : datum.key === 'Shelf (encoded)' ? 'Inshore' : format(datum.min, '.2f')",
+      "as": "bot_label"
     }
   ],
   "layer": [
@@ -104,12 +116,38 @@
       }
     },
     {
+      "params": [
+        {
+          "name": "hover",
+          "select": {
+            "type": "point",
+            "fields": ["index"],
+            "on": "mouseover",
+            "clear": "mouseout"
+          }
+        }
+      ],
+      "mark": { "type": "line", "strokeWidth": 16, "opacity": 0.01 },
+      "encoding": {
+        "detail": { "type": "nominal", "field": "index" },
+        "x": {
+          "type": "nominal",
+          "field": "key",
+          "sort": ["Region (encoded)", "Shelf (encoded)", "Live Coral (%)", "COTS per Tow (sqrt)"]
+        },
+        "y": {
+          "type": "quantitative",
+          "field": "norm_val",
+          "axis": null
+        }
+      }
+    },
+    {
       "mark": { "type": "line", "strokeWidth": 1 },
       "encoding": {
         "color": {
           "field": "Region",
           "type": "nominal",
-          
           "scale": {
             "domain": ["Northern", "Central", "Southern"],
             "range":  ["#4dd0e1", "#81c784", "#ffb74d"]
@@ -121,8 +159,15 @@
             "orient": "top-right"
           }
         },
-        "detail":  { "type": "nominal", "field": "index" },
-        "opacity": { "value": 0.35 },
+        "detail": { "type": "nominal", "field": "index" },
+        "opacity": {
+          "condition": { "param": "hover", "empty": true, "value": 0.75 },
+          "value": 0.05
+        },
+        "strokeWidth": {
+          "condition": { "param": "hover", "empty": false, "value": 2.5 },
+          "value": 0.8
+        },
         "x": {
           "type": "nominal",
           "field": "key",
@@ -153,7 +198,7 @@
       "layer": [
         {
           "mark": { "type": "text", "style": "label" },
-          "encoding": { "text": { "aggregate": "max", "field": "max", "format": ".2f" } }
+          "encoding": { "text": { "aggregate": "min", "field": "top_label", "type": "nominal" } }
         },
         { "mark": { "type": "tick", "style": "tick", "size": 8, "color": "#90caf9" } }
       ]
@@ -169,7 +214,7 @@
       "layer": [
         {
           "mark": { "type": "text", "style": "label" },
-          "encoding": { "text": { "aggregate": "min", "field": "mid", "format": ".2f" } }
+          "encoding": { "text": { "aggregate": "min", "field": "mid_label", "type": "nominal" } }
         },
         { "mark": { "type": "tick", "style": "tick", "size": 8, "color": "#90caf9" } }
       ]
@@ -185,7 +230,7 @@
       "layer": [
         {
           "mark": { "type": "text", "style": "label" },
-          "encoding": { "text": { "aggregate": "min", "field": "min", "format": ".2f" } }
+          "encoding": { "text": { "aggregate": "min", "field": "bot_label", "type": "nominal" } }
         },
         { "mark": { "type": "tick", "style": "tick", "size": 8, "color": "#90caf9" } }
       ]

@@ -1,20 +1,22 @@
-
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "width": "container",
-  "height": 400,
-  "padding": { "left": 25, "right": 5, "top": 5, "bottom": 5 },
+  "height": 490,
+  "padding": { "left": 20, "right": 20, "top": 5, "bottom": 5 },
   "autosize": { "type": "fit", "contains": "padding" },
   "title": {
     "text": "Coral Substrate Composition",
-    "subtitle": "Position = proportional share of live / dead / soft coral Colour = survey year",
+    "subtitle": [
+      "Each dot is one reef survey · position shows coral mix — closer to a corner means dominated by that type",
+      "Colour = survey year  ·  Size = crown-of-thorns starfish (COTS) density per tow"
+    ],
     "color": "#e8f4f8",
     "subtitleColor": "#a8d4df",
     "font": "Playfair Display, serif",
     "subtitleFont": "Source Sans 3, sans-serif",
-    "subtitleFontSize": 9,
+    "subtitleFontSize": 10,
     "fontSize": 13,
-    "anchor": "start",
+    "anchor": "middle",
     "offset": 8
   },
   "config": {
@@ -22,14 +24,17 @@
     "font": "Source Sans 3, sans-serif",
     "view": { "stroke": "transparent" },
     "legend": {
-      "labelColor":   "#6fb3c4",
-      "titleColor":   "#a8d4df",
-      "fillColor":    "rgba(0,20,35,0.82)",
-      "strokeColor":  "rgba(94,200,192,0.25)",
-      "cornerRadius": 6,
-      "padding":      8,
-      "titleFontSize": 10,
-      "labelFontSize": 9
+      "labelColor":    "#6fb3c4",
+      "titleColor":    "#a8d4df",
+      "fillColor":     "rgba(0,20,35,0.82)",
+      "strokeColor":   "rgba(94,200,192,0.25)",
+      "cornerRadius":  6,
+      "padding":       8,
+      "titleFontSize": 11,
+      "labelFontSize": 10,
+      "layout": {
+        "bottom": { "anchor": "middle", "direction": "horizontal", "margin": 12 }
+      }
     }
   },
   "layer": [
@@ -37,26 +42,26 @@
       "description": "Dashed grid lines at 25 / 50 / 75 % for all three axes",
       "data": {
         "values": [
-          {"x1": 0.75,  "y1": 0.0,    "x2": 0.375, "y2": 0.6495},
-          {"x1": 0.50,  "y1": 0.0,    "x2": 0.250, "y2": 0.4330},
-          {"x1": 0.25,  "y1": 0.0,    "x2": 0.125, "y2": 0.2165},
-          {"x1": 0.25,  "y1": 0.0,    "x2": 0.625, "y2": 0.6495},
-          {"x1": 0.50,  "y1": 0.0,    "x2": 0.750, "y2": 0.4330},
-          {"x1": 0.75,  "y1": 0.0,    "x2": 0.875, "y2": 0.2165},
-          {"x1": 0.125, "y1": 0.2165, "x2": 0.875, "y2": 0.2165},
-          {"x1": 0.250, "y1": 0.4330, "x2": 0.750, "y2": 0.4330},
-          {"x1": 0.375, "y1": 0.6495, "x2": 0.625, "y2": 0.6495}
+          { "x1": 0.75,  "y1": 0.0,    "x2": 0.375, "y2": 0.6495 },
+          { "x1": 0.50,  "y1": 0.0,    "x2": 0.250, "y2": 0.4330 },
+          { "x1": 0.25,  "y1": 0.0,    "x2": 0.125, "y2": 0.2165 },
+          { "x1": 0.25,  "y1": 0.0,    "x2": 0.625, "y2": 0.6495 },
+          { "x1": 0.50,  "y1": 0.0,    "x2": 0.750, "y2": 0.4330 },
+          { "x1": 0.75,  "y1": 0.0,    "x2": 0.875, "y2": 0.2165 },
+          { "x1": 0.125, "y1": 0.2165, "x2": 0.875, "y2": 0.2165 },
+          { "x1": 0.250, "y1": 0.4330, "x2": 0.750, "y2": 0.4330 },
+          { "x1": 0.375, "y1": 0.6495, "x2": 0.625, "y2": 0.6495 }
         ]
       },
       "mark": {
         "type": "rule",
-        "stroke": "rgba(94,200,192,0.15)",
-        "strokeWidth": 0.8,
+        "stroke": "rgba(94,200,192,0.22)",
+        "strokeWidth": 1.0,
         "strokeDash": [4, 3]
       },
       "encoding": {
-        "x":  { "field": "x1", "type": "quantitative", "scale": { "domain": [-0.14, 1.14] }, "axis": null },
-        "y":  { "field": "y1", "type": "quantitative", "scale": { "domain": [-0.12, 0.98] }, "axis": null },
+        "x":  { "field": "x1", "type": "quantitative", "scale": { "domain": [-0.04, 1.04] }, "axis": null },
+        "y":  { "field": "y1", "type": "quantitative", "scale": { "domain": [-0.13, 0.93] }, "axis": null },
         "x2": { "field": "x2" },
         "y2": { "field": "y2" }
       }
@@ -72,8 +77,8 @@
       },
       "mark": {
         "type": "rule",
-        "stroke": "rgba(94,200,192,0.5)",
-        "strokeWidth": 1.6
+        "stroke": "rgba(94,200,192,0.65)",
+        "strokeWidth": 2.0
       },
       "encoding": {
         "x":  { "field": "x1", "type": "quantitative", "axis": null },
@@ -83,12 +88,12 @@
       }
     },
     {
-      "description": "Corner label — Live Hard Coral (right-aligned at bottom-left)",
+      "description": "Corner label — Live Hard Coral (bottom-left)",
       "data": { "values": [ { "x": 0.0, "y": 0.0, "t": "Live Hard Coral" } ] },
       "mark": {
         "type": "text", "align": "right",
-        "fontWeight": "bold", "fontSize": 11,
-        "color": "#5ec8c0", "dx": -6, "dy": 14
+        "fontWeight": "bold", "fontSize": 13,
+        "color": "#5ec8c0", "dx": -4, "dy": 15
       },
       "encoding": {
         "x":    { "field": "x", "type": "quantitative", "axis": null },
@@ -97,12 +102,12 @@
       }
     },
     {
-      "description": "Corner label — Dead Coral (left-aligned at bottom-right)",
+      "description": "Corner label — Dead Coral (bottom-right)",
       "data": { "values": [ { "x": 1.0, "y": 0.0, "t": "Dead Coral" } ] },
       "mark": {
         "type": "text", "align": "left",
-        "fontWeight": "bold", "fontSize": 11,
-        "color": "#e07a5f", "dx": 6, "dy": 14
+        "fontWeight": "bold", "fontSize": 13,
+        "color": "#e07a5f", "dx": 4, "dy": 15
       },
       "encoding": {
         "x":    { "field": "x", "type": "quantitative", "axis": null },
@@ -111,12 +116,12 @@
       }
     },
     {
-      "description": "Corner label — Soft Coral (centred above top vertex)",
+      "description": "Corner label — Soft Coral (top vertex)",
       "data": { "values": [ { "x": 0.5, "y": 0.866, "t": "Soft Coral" } ] },
       "mark": {
         "type": "text", "align": "center",
-        "fontWeight": "bold", "fontSize": 11,
-        "color": "#e9c46a", "dy": -13
+        "fontWeight": "bold", "fontSize": 13,
+        "color": "#e9c46a", "dy": -14
       },
       "encoding": {
         "x":    { "field": "x", "type": "quantitative", "axis": null },
@@ -125,15 +130,15 @@
       }
     },
     {
-      "description": "Tick labels — bottom edge (dead coral %, left→right)",
+      "description": "Tick labels — bottom edge (dead coral %, left to right)",
       "data": {
         "values": [
-          { "x": 0.25, "y": -0.04, "t": "25%" },
-          { "x": 0.50, "y": -0.04, "t": "50%" },
-          { "x": 0.75, "y": -0.04, "t": "75%" }
+          { "x": 0.25, "y": -0.05, "t": "25%" },
+          { "x": 0.50, "y": -0.05, "t": "50%" },
+          { "x": 0.75, "y": -0.05, "t": "75%" }
         ]
       },
-      "mark": { "type": "text", "align": "center", "fontSize": 8.5, "color": "#6fb3c4" },
+      "mark": { "type": "text", "align": "center", "fontSize": 10, "color": "#6fb3c4" },
       "encoding": {
         "x":    { "field": "x", "type": "quantitative", "axis": null },
         "y":    { "field": "y", "type": "quantitative", "axis": null },
@@ -149,7 +154,7 @@
           { "x": 0.375, "y": 0.6495, "t": "25%" }
         ]
       },
-      "mark": { "type": "text", "align": "right", "fontSize": 8.5, "color": "#6fb3c4", "dx": -7 },
+      "mark": { "type": "text", "align": "right", "fontSize": 10, "color": "#6fb3c4", "dx": -7 },
       "encoding": {
         "x":    { "field": "x", "type": "quantitative", "axis": null },
         "y":    { "field": "y", "type": "quantitative", "axis": null },
@@ -165,11 +170,34 @@
           { "x": 0.625, "y": 0.6495, "t": "75%" }
         ]
       },
-      "mark": { "type": "text", "align": "left", "fontSize": 8.5, "color": "#6fb3c4", "dx": 7 },
+      "mark": { "type": "text", "align": "left", "fontSize": 10, "color": "#6fb3c4", "dx": 7 },
       "encoding": {
         "x":    { "field": "x", "type": "quantitative", "axis": null },
         "y":    { "field": "y", "type": "quantitative", "axis": null },
         "text": { "field": "t", "type": "nominal" }
+      }
+    },
+    {
+      "description": "Axis titles — anchored in empty corner spaces using data coordinates (no pixel overflow)",
+      "data": {
+        "values": [
+          { "x": 0.50, "y": -0.10, "t": "% Dead coral", "angle": 0,   "col": "dead" },
+          { "x": 0.05, "y": 0.43,  "t": "% Live coral",  "angle": 300, "col": "live" },
+          { "x": 0.95, "y": 0.43,  "t": "% Soft coral",  "angle": 0,   "col": "soft" }
+        ]
+      },
+      "mark": { "type": "text", "fontSize": 9, "fontStyle": "italic", "align": "center" },
+      "encoding": {
+        "x":     { "field": "x",     "type": "quantitative", "axis": null },
+        "y":     { "field": "y",     "type": "quantitative", "axis": null },
+        "text":  { "field": "t",     "type": "nominal" },
+        "angle": { "field": "angle", "type": "quantitative" },
+        "color": {
+          "field": "col",
+          "type": "nominal",
+          "scale": { "domain": ["dead", "live", "soft"], "range": ["#e07a5f", "#5ec8c0", "#e9c46a"] },
+          "legend": null
+        }
       }
     },
     {
@@ -198,9 +226,9 @@
       ],
       "mark": {
         "type": "circle",
-        "opacity": 0.68,
+        "opacity": 0.72,
         "stroke": "rgba(255,255,255,0.15)",
-        "strokeWidth": 0.5
+        "strokeWidth": 0.8
       },
       "encoding": {
         "x": { "field": "tx", "type": "quantitative", "axis": null },
@@ -211,8 +239,12 @@
           "scale": { "scheme": "viridis", "domain": [1998, 2023] },
           "legend": {
             "title": "Survey year",
+            "orient": "bottom",
+            "direction": "horizontal",
             "gradientLength": 110,
-            "gradientThickness": 10
+            "gradientThickness": 10,
+            "titleOrient": "left",
+            "labelFormat": "d"
           }
         },
         "size": {
@@ -221,8 +253,11 @@
           "scale": { "type": "sqrt", "range": [10, 260] },
           "legend": {
             "title": "COTS / tow",
+            "orient": "bottom",
+            "direction": "horizontal",
             "values": [0, 1, 5, 20, 86],
-            "symbolOpacity": 0.8
+            "symbolOpacity": 0.8,
+            "titleOrient": "left"
           }
         },
         "tooltip": [
