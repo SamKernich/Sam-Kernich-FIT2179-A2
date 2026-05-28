@@ -85,23 +85,14 @@
       "mark": {
         "type": "circle",
         "opacity": 0.82,
+        "size": 150, 
         "stroke": "rgba(255,255,255,0.18)",
-        "strokeWidth": 0.5
+        "strokeWidth": 1
       },
       "encoding": {
         "longitude": { "field": "lon", "type": "quantitative" },
         "latitude":  { "field": "lat", "type": "quantitative" },
-        "size": {
-          "field": "coral_pct",
-          "type": "quantitative",
-          "scale": { "domain": [0, 70], "range": [18, 520] },
-          "legend": {
-            "title": "Live Coral (%)",
-            "values": [5, 20, 40, 60],
-            "labelColor": "#09d6dd",
-            "titleColor": "#09d6dd"
-          }
-        },
+        
         "color": {
           "field": "coral_pct",
           "type": "quantitative",
