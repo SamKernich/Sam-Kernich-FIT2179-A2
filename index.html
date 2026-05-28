@@ -239,6 +239,19 @@
       color: var(--seafoam-light);
       margin-bottom: 0;
     }
+<<<<<<< HEAD
+=======
+    .footer-card h3 {
+      font-family: 'Playfair Display', serif;
+      color: #e8f4f8;
+      margin-bottom: 0.5rem;
+    }
+    .footer-card p {
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: var(--text-mid);
+    }
+>>>>>>> d1e6bc02a76a47a5768a28d13625bfbe504d51c8
     .footer-card .byline {
       margin-top: 1rem;
       font-size: 0.8rem;
@@ -537,7 +550,7 @@
     <div id="gbm-controls"></div>
     <div id="gbm-chart" style="width:100%; min-height:460px; border-radius:8px; overflow:hidden;"></div>
     <p class="data-source mt-sm">
-      Source: <a href="https://doi.org/10.25573/serc.14555977" target="_blank" class="link">
+      Source: <a href="https://www.bco-dmo.org/dataset/773466" target="_blank" class="link">
         Donner et al. (2022) — Global Bleaching &amp; Environmental Database (doi:10.25573/serc.14555977)
       </a>
     </p>
@@ -552,7 +565,11 @@
       Data Management Office (BCODMO). All data sources are also listed and referenced when used throughout the webpage.
     </p>
     <p style="margin-top:0.8rem;">
+<<<<<<< HEAD
       Webpage layout using HTML and CSS, visualization created using Vegalite. Generative AI (Claude, Anthropic) was used to aid with webpage layout and code structure.
+=======
+      Webpage layout using HTML and CSS, visualization created using Vegalite. Generative AI (Claude, Anthropic) was used to aid with webpage layout and code structure. 
+>>>>>>> d1e6bc02a76a47a5768a28d13625bfbe504d51c8
       All data, analysis, design decisions and visual elements are the authors own.
     </p>
     <div class="byline">
@@ -567,6 +584,7 @@
 <script>
   const embedOpts = { actions: false, renderer: "svg" };
 
+<<<<<<< HEAD
   vegaEmbed("#map-plot",            "Vega_Specs/gbr-map.json",                embedOpts);
   vegaEmbed("#waterfall-chart",     "Vega_Specs/sst-anomaly.json",            embedOpts);
   vegaEmbed("#parallel-coordinate", "Vega_Specs/parallel_chart.json",         embedOpts);
@@ -576,6 +594,25 @@
     .catch(function(e){ console.error("[treemap]", e); });
   vegaEmbed("#threat-bubbles",      "Vega_Specs/threat-bubbles.json",         embedOpts)
     .catch(function(e){ console.error("[bubbles]", e); });
+=======
+  const embedOpts = {
+    actions: false,
+    renderer: "svg"
+  };
+
+  // ── MAP: GBR bubble map from external JSON ──
+  vegaEmbed("#map-plot",           "Vega_Specs/gbr-map.json",           embedOpts);
+  vegaEmbed("#waterfall-chart",    "Vega_Specs/sst-anomaly.json",       embedOpts);
+  vegaEmbed("#parallel-coordinate","Vega_Specs/parallel_chart.json",    embedOpts);
+  vegaEmbed("#radial-plot",        "Vega_Specs/reef-distribution-2025.json", embedOpts);
+  vegaEmbed("#ternary-plot",       "Vega_Specs/ternary-coral.json",     embedOpts);
+  vegaEmbed("#word-cloud",     "Vega_Specs/describe_reef.json",  embedOpts)
+    .catch(function(e){ console.error("[treemap]",  e); });
+  vegaEmbed("#threat-bubbles", "Vega_Specs/threat-bubbles.json", embedOpts)
+    .catch(function(e){ console.error("[bubbles]",  e); });
+ 
+  
+>>>>>>> d1e6bc02a76a47a5768a28d13625bfbe504d51c8
 </script>
 
 <script src="js/cots-timeline-animation.js"></script>
